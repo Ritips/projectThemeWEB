@@ -2,6 +2,7 @@ from data import db_session
 from flask_restful import Resource, reqparse, abort
 from flask import jsonify
 from data.items import Item
+from data.type_of_goods import Category
 
 
 parser = reqparse.RequestParser()
@@ -16,6 +17,12 @@ def abort_if_item_not_found(id_item):
         abort(404, message=f"Item {id_item} not found")
 
 
+def abort_if_category_not_found(id_category):
+    db_sess = db_session.create_session()
+    if not db_sess.query(Category).get(id_category):
+        abort(404, message=f'Category {id_category} not found')
+
+
 class ItemResource(Resource):
     @staticmethod
     def get(id_item):
@@ -23,7 +30,7 @@ class ItemResource(Resource):
         db_sess = db_session.create_session()
         items = db_sess.query(Item).get(id_item)
         return jsonify({"items": items.to_dict(
-            only=("id", "title", "type_of_goods", "img_path"))})
+            only=("id", "title", "id_category", "img_path"))})
 
     @staticmethod
     def delete(id_item):
@@ -41,11 +48,12 @@ class ItemListResource(Resource):
         db_sess = db_session.create_session()
         items = db_sess.query(Item).all()
         return jsonify({"items": [item.to_dict(
-            only=("id", 'title', 'type_of_goods', 'img_path')) for item in items]})
+            only=("id", 'title', 'id_category', 'img_path')) for item in items]})
 
     @staticmethod
     def post():
         args = parser.parse_args()
+        abort_if_category_not_found(args["id_category"])
         item = Item()
         item.set_information(title=args["title"], id_category=args["id_category"], img_path=args["img_path"])
         db_sess = db_session.create_session()

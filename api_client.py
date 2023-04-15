@@ -18,7 +18,7 @@ def abort_if_client_not_found(client_id):
 def abort_if_exists(user_id):
     db_sess = db_session.create_session()
     if db_sess.query(Client).filter_by(login_id=user_id).first():
-        abort(409, message=f"Client {user_id} already exists")
+        abort(409, message=f"Client who was already connected to user with id: {user_id} already exists")
 
 
 def abort_if_user_not_found(login_id):
@@ -69,7 +69,7 @@ class ClientListResource(Resource):
     def get():
         db_sess = db_session.create_session()
         clients = db_sess.query(Client).all()
-        dict_clients = {"users": []}
+        dict_clients = {"clients": []}
         for client in clients:
             user = client.user
             name, surname, email, phone = user.name, user.surname, user.email, user.phone
@@ -77,7 +77,7 @@ class ClientListResource(Resource):
             orders = client.orders
             client_dict = {"name": name, "surname": surname, "email": email, "phone": phone,
                            "second_email": second_email, "orders": [item for item in orders]}
-            dict_clients["users"].append(client_dict)
+            dict_clients["clients"].append(client_dict)
         return jsonify(dict_clients)
 
     @staticmethod
