@@ -33,14 +33,8 @@ def main_page():
     return 'noen'
 
 
-def test():
-    s = db_session.create_session()
-    res = s.query(User).all()
-
-
 def main():
     db_session.global_init('db/Supercell_is_piece_of_sheet9.sqlite')
-    # test()
     api.add_resource(api_item.ItemResource, "/api/items/<int:id_item>")
     api.add_resource(api_item.ItemListResource, "/api/items")
     api.add_resource(api_users.UserResource, '/api/users/<int:id_user>')
