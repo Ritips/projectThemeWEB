@@ -35,11 +35,9 @@ class ClientResource(Resource):
         client = db_sess.query(Client).get(id_client)
         user = client.user
         name, surname, email, phone, second_email = user.name, user.surname, user.email, user.phone, user.second_email
-        orders = client.orders
         return jsonify({"clients": {
             "id": client.id, "user_id": client.login_id,
             "name": name, "surname": surname, "email": email, "phone": phone, "second_email": second_email,
-            "orders": [item for item in orders]
         }})
 
     @staticmethod
@@ -74,9 +72,8 @@ class ClientListResource(Resource):
             user = client.user
             name, surname, email, phone = user.name, user.surname, user.email, user.phone
             second_email = user.second_email
-            orders = client.orders
             client_dict = {"name": name, "surname": surname, "email": email, "phone": phone,
-                           "second_email": second_email, "orders": [item for item in orders]}
+                           "second_email": second_email}
             dict_clients["clients"].append(client_dict)
         return jsonify(dict_clients)
 
