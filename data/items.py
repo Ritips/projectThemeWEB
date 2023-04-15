@@ -15,3 +15,5 @@ class Item(SqlAlchemyBase, SerializerMixin):
     category = orm.relationship("Category", back_populates="products")
     orders = orm.relationship("OrderItem", back_populates="items")
 
+    def set_information(self, title, id_category, img_path):
+        self.title, self.id_category, self.img_path = title, id_category, img_path

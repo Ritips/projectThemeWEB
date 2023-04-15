@@ -4,6 +4,7 @@ from .db_session import SqlAlchemyBase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy import orm
+import datetime
 
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -17,6 +18,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     surname = sqlalchemy.Column(sqlalchemy.String)
     phone = sqlalchemy.Column(sqlalchemy.String, unique=True)
     second_email = sqlalchemy.Column(sqlalchemy.String, unique=True)
+    date_log_in = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
 
     clients = orm.relationship("Client", back_populates='user')
     admins = orm.relationship("Admin", back_populates='user')
