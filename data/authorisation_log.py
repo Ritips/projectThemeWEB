@@ -18,7 +18,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     phone = sqlalchemy.Column(sqlalchemy.String, unique=True)
     second_email = sqlalchemy.Column(sqlalchemy.String, unique=True)
 
-    client = orm.relationship("Client", back_populates='user')
+    clients = orm.relationship("Client", back_populates='user')
     admins = orm.relationship("Admin", back_populates='user')
 
     def set_password(self, password):

@@ -24,7 +24,7 @@ def test():
 
 
 def main():
-    db_session.global_init('db/Supercell_is_piece_of_sheet6.sqlite')
+    db_session.global_init('db/Supercell_is_piece_of_sheet8.sqlite')
     test()
     # app.run()
 

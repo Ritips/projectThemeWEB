@@ -13,3 +13,5 @@ class Item(SqlAlchemyBase, SerializerMixin):
     img_path = sqlalchemy.Column(sqlalchemy.String)
 
     category = orm.relationship("Category", back_populates="products")
+    orders = orm.relationship("OrderItem", back_populates="items")
+

@@ -10,4 +10,5 @@ class Client(SqlAlchemyBase, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     login_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
 
-    user = orm.relationship("User")
+    orders = orm.relationship("Order", back_populates="client")
+    user = orm.relationship("User", back_populates='clients')
