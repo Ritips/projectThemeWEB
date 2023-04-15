@@ -51,3 +51,4 @@ class ItemListResource(Resource):
         db_sess = db_session.create_session()
         db_sess.add(item)
         db_sess.commit()
+        return jsonify({"success": "OK"})

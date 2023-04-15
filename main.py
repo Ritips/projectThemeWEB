@@ -1,3 +1,7 @@
+import api_admins
+import api_order
+import api_order_to_items
+import api_type_of_goods
 from data import db_session
 from flask import redirect, Flask, render_template
 from data.clients import Client
@@ -43,6 +47,14 @@ def main():
     api.add_resource(api_users.UserListResource, '/api/users')
     api.add_resource(api_client.ClientResource, '/api/clients/<int:id_client>')
     api.add_resource(api_client.ClientListResource, '/api/clients')
+    api.add_resource(api_admins.AdminResource, '/api/admins/<int:id_admin>')
+    api.add_resource(api_admins.AdminListResource, '/api/admins')
+    api.add_resource(api_type_of_goods.CategoryResource, '/api/type_of_goods/<int:id_category>')
+    api.add_resource(api_type_of_goods.CategoryListResource, '/api/type_of_goods')
+    api.add_resource(api_order.OrderResource, '/api/order/<int:id_order>')
+    api.add_resource(api_order.OrderListResource, '/api/orders')
+    api.add_resource(api_order_to_items.OrderItemResource, '/api/order_to_item/<int:id_order_item>')
+    api.add_resource(api_order_to_items.OrderItemListResource, '/api/order_to_item')
     app.run()
 
 

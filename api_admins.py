@@ -52,6 +52,7 @@ class AdminResource(Resource):
             abort_if_exists(args["login_id"])
             admin.login_id = args["login_id"]
         db_sess.commit()
+        return jsonify({"success": "OK"})
 
     @staticmethod
     def delete(admin_id):
@@ -60,6 +61,7 @@ class AdminResource(Resource):
         admin = db_sess.query(Admin).filter_by(id=admin_id).first()
         db_sess.delete(admin)
         db_sess.commit()
+        return jsonify({"success": "OK"})
 
 
 class AdminListResource(Resource):
@@ -87,3 +89,4 @@ class AdminListResource(Resource):
         db_sess = db_session.create_session()
         db_sess.add(admin)
         db_sess.commit()
+        return jsonify({"success": "OK"})

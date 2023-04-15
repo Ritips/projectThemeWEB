@@ -68,6 +68,7 @@ class OrderResource(Resource):
         if args["deliver_days"] != -1:
             order.deliver_days = args["deliver_days"]
         db_sess.commit()
+        return jsonify({"success": "OK"})
 
     @staticmethod
     def delete(id_order):
@@ -76,6 +77,7 @@ class OrderResource(Resource):
         order = db_sess.query(Order).get(id_order)
         db_sess.delete(order)
         db_sess.commit()
+        return jsonify({"success": "OK"})
 
 
 class OrderListResource(Resource):
@@ -105,3 +107,4 @@ class OrderListResource(Resource):
                                                  day=day, hour=hours, minute=minutes, second=seconds)
         if args["deliver_days"] != -1:
             order.deliver_days = args["deliver_days"]
+        return jsonify({"success": "OK"})
