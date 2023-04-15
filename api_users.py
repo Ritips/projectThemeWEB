@@ -35,6 +35,13 @@ def abort_if_phone_is_already_used(phone):
         abort(409, message=f"Phone {phone} is already used")
 
 
+def abort_if_login_is_already_used(login):
+    db_sess = db_session.create_session()
+    users = db_sess.query(User).filter_by(login=login).first()
+    if users:
+        abort(409, message=f"Login {login} is already used")
+
+
 class UserResource(Resource):
     @staticmethod
     def get(user_id):
@@ -53,6 +60,29 @@ class UserResource(Resource):
         db_sess.commit()
         return jsonify({"success": "OK"})
 
+    @staticmethod
+    def put(user_id):
+        args = parser.parse_args()
+        abort_if_users_not_found(user_id)
+        if args["phone"]:
+            abort_if_phone_is_already_used(args["phone"])
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).get(user_id)
+        if user.login != args["login"]:
+            abort_if_login_is_already_used(args["login"])
+            user.login = args["login"]
+        if user.email != args["email"]:
+            abort_if_email_is_already_used(args["email"])
+            user.email = args["email"]
+        if args["phone"] and user.phone != args["phone"]:
+            abort_if_phone_is_already_used(args["phone"])
+            user.phone = args["phone"]
+        if args["second_email"]:
+            user.second_email = args["second_email"]
+        user.name, user.surname = args["name"], args["surname"]
+        user.set_password(args["password"])
+        return jsonify({"success": "OK"})
+
 
 class UserListResource(Resource):
     @staticmethod
@@ -66,6 +96,7 @@ class UserListResource(Resource):
     def post():
         args = parser.parse_args()
         abort_if_email_is_already_used(args["email"])
+        abort_if_login_is_already_used(args["login"])
         if args["phone"]:
             abort_if_phone_is_already_used(args["phone"])
         db_sess = db_session.create_session()

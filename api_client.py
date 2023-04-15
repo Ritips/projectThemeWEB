@@ -2,6 +2,7 @@ from flask_restful import Resource, abort, reqparse
 from flask import jsonify
 from data import db_session
 from data.clients import Client
+from data.authorisation_log import User
 
 
 parser = reqparse.RequestParser()
@@ -20,6 +21,12 @@ def abort_if_exists(user_id):
         abort(409, message=f"Client {user_id} already exists")
 
 
+def abort_if_user_not_found(login_id):
+    db_sess = db_session.create_session()
+    if not db_sess.query(User).filter_by(id=login_id).first():
+        abort(404, message=f'User {login_id} not Found')
+
+
 class ClientResource(Resource):
     @staticmethod
     def get(id_client):
@@ -30,6 +37,7 @@ class ClientResource(Resource):
         name, surname, email, phone, second_email = user.name, user.surname, user.email, user.phone, user.second_email
         orders = client.orders
         return jsonify({"clients": {
+            "id": client.id, "user_id": client.login_id,
             "name": name, "surname": surname, "email": email, "phone": phone, "second_email": second_email,
             "orders": [item for item in orders]
         }})
@@ -48,6 +56,7 @@ class ClientResource(Resource):
         args = parser.parse_args()
         abort_if_client_not_found(id_client)
         abort_if_exists(args["user_id"])
+        abort_if_user_not_found(args["user_id"])
         db_sess = db_session.create_session()
         client = db_sess.query(Client).get(id_client)
         client.login_id = args["user_id"]
@@ -75,6 +84,7 @@ class ClientListResource(Resource):
     def post():
         args = parser.parse_args()
         abort_if_exists(args["user_id"])
+        abort_if_user_not_found(args["user_id"])
         client = Client()
         db_sess = db_session.create_session()
         db_sess.add(client)
