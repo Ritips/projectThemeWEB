@@ -69,6 +69,9 @@ def register():
         response = requests.post('http://127.0.0.1:5000/api/users', params=params)
         if response:
             return redirect('/login')
+        return render_template('register.html', title='Registration', form=form,
+                               message=response.json()["message"])
+    return render_template('register.html', title='Registration', form=form)
 
 
 @app.route('/logout')
