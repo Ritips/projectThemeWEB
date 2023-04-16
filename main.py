@@ -32,13 +32,24 @@ login_manager.init_app(app)
 
 @app.route('/')
 def main_page():
-    return ''
+    return render_template('main_page.html', title="SystemSHOP", current_user=current_user)
 
 
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
+
+
+@app.route('/catalog')
+def catalog():
+    return render_template('main_page.html', title="SystemSHOP", current_user=current_user)
+
+
+@app.route('/privacy_setting')
+@login_required
+def privacy_setting():
+    return 'Coming soon'
 
 
 @app.route('/login', methods=['GET', 'POST'])

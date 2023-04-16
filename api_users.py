@@ -44,24 +44,26 @@ class UserResource(Resource):
         if not user:
             abort(404, message=f"User {user_id} not found")
         if user.login != args["login"]:
-            try:
-                user.login = args["login"]
-            except sqlalchemy.exc.IntegrityError:
-                abort(409, message=f"Login {args['login']} is already used")
+            user.login = args["login"]
         if user.email != args["email"]:
-            try:
-                user.email = args["email"]
-            except sqlalchemy.exc.IntegrityError:
-                abort(409, message=f"Email {args['email']} is already used")
+            user.email = args["email"]
         if args["phone"] and user.phone != args["phone"]:
-            try:
-                user.phone = args["phone"]
-            except sqlalchemy.exc.IntegrityError:
-                abort(409, message=f"Phone {args['phone']} is already used")
+            user.phone = args["phone"]
         if args["second_email"]:
             user.second_email = args["second_email"]
         user.name, user.surname = args["name"], args["surname"]
         user.set_password(args["password"])
+        try:
+            db_sess.commit()
+        except sqlalchemy.exc.IntegrityError as er:
+            text = str(er.args)
+            if 'login' in text:
+                text = f'Login {args["login"]} is already used'
+            elif 'email' in text:
+                text = f'Email {args["email"]} is already used'
+            elif 'phone' in text:
+                text = f'Phone {args["phone"]} is already used'
+            abort(409, message=text)
         return jsonify({"success": "OK"})
 
 
@@ -78,26 +80,27 @@ class UserListResource(Resource):
         args = parser.parse_args()
         db_sess = db_session.create_session()
         user = User()
-        try:
-            user.login = args['login']
-        except sqlalchemy.exc.IntegrityError:
-            abort(409, message=f"Login {args['login']} is already used")
-        try:
-            user.email = args['email']
-        except sqlalchemy.exc.IntegrityError:
-            abort(409, message=f"Email {args['email']} is already used")
+        user.login = args['login']
+        user.email = args['email']
         user.name, user.surname = args['name'], args['surname']
         user.set_password(args["password"])
         if args["phone"]:
-            try:
-                user.phone = args['phone']
-            except sqlalchemy.exc.IntegrityError:
-                abort(409, message=f"Phone {args['phone']} is already used")
+            user.phone = args['phone']
         if args["second_email"]:
             user.set_second_email(args["second_email"])
         client = Client()
         client.user = user
         db_sess.add(client)
-        db_sess.add(user)
-        db_sess.commit()
+        try:
+            db_sess.add(user)
+            db_sess.commit()
+        except sqlalchemy.exc.IntegrityError as er:
+            text = str(er.args)
+            if 'login' in text:
+                text = f'Login {args["login"]} is already used'
+            elif 'email' in text:
+                text = f'Email {args["email"]} is already used'
+            elif 'phone' in text:
+                text = f'Phone {args["phone"]} is already used'
+            abort(409, message=text)
         return jsonify({"success": "OK"})
