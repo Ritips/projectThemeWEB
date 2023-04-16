@@ -3,6 +3,7 @@ from flask_restful import Resource, abort, reqparse
 from flask import jsonify
 from data import db_session
 from data.authorisation_log import User
+from data.clients import Client
 
 
 parser = reqparse.RequestParser()
@@ -94,6 +95,9 @@ class UserListResource(Resource):
                 abort(409, message=f"Phone {args['phone']} is already used")
         if args["second_email"]:
             user.set_second_email(args["second_email"])
+        client = Client()
+        client.user = user
+        db_sess.add(client)
         db_sess.add(user)
         db_sess.commit()
         return jsonify({"success": "OK"})

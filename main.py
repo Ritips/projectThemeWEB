@@ -18,6 +18,8 @@ import requests
 import api_client
 import api_item
 import api_users
+from forms.login_form import LoginForm
+from forms.register_form import RegisterForm
 
 
 app = Flask(__name__)
@@ -30,7 +32,50 @@ login_manager.init_app(app)
 
 @app.route('/')
 def main_page():
-    return 'noen'
+    return ''
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter_by(login=form.login).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me)
+            return redirect('/')
+        return render_template('login.html', title="Authorization",
+                               message="Incorrect login or password", form=form)
+    return render_template('login.html', title="Authorization", form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.repeat_password.data:
+            return render_template('register.html', title='Registration', form=form,
+                                   message='Password missmatch')
+        params = {
+            "login": form.login.data, 'password': form.password.data, 'email': form.email.data,
+            'name': form.name.data, 'surname': form.surname.data
+        }
+        response = requests.post('http://127.0.0.1:5000/api/users', params=params)
+        if response:
+            return redirect('/login')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
 
 
 def main():
