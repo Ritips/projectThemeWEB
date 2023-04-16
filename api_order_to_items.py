@@ -9,25 +9,21 @@ parser.add_argument('id_order', type=int, required=True, location="args")
 parser.add_argument("id_item", type=int, required=True, location="args")
 
 
-def abort_if_order_item_not_exists(id_order_item):
-    db_sess = db_session.create_session()
-    if not db_sess.query(OrderItem).get(id_order_item):
-        abort(404, message=f'OrderItem {id_order_item} Not Found')
-
-
 class OrderItemResource(Resource):
     @staticmethod
     def get(id_order_item):
-        abort_if_order_item_not_exists(id_order_item)
         db_sess = db_session.create_session()
         order_item = db_sess.query(OrderItem).get(id_order_item)
+        if not order_item:
+            abort(404, message=f'OrderItem {id_order_item} Not Found')
         return jsonify({"order_items": order_item.to_dict(only=("id", 'id_order', "id_item"))})
 
     @staticmethod
     def delete(id_order_item):
-        abort_if_order_item_not_exists(id_order_item)
         db_sess = db_session.create_session()
         order_item = db_sess.query(OrderItem).get(id_order_item)
+        if not order_item:
+            abort(404, message=f'OrderItem {id_order_item} Not Found')
         db_sess.delete(order_item)
         db_sess.commit()
         return jsonify({"success": "OK"})
