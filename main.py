@@ -57,7 +57,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter_by(login=form.login).first()
+        user = db_sess.query(User).filter_by(login=form.login.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me)
             return redirect('/')
