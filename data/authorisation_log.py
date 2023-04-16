@@ -17,7 +17,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     name = sqlalchemy.Column(sqlalchemy.String)
     surname = sqlalchemy.Column(sqlalchemy.String)
     phone = sqlalchemy.Column(sqlalchemy.String, unique=True)
-    second_email = sqlalchemy.Column(sqlalchemy.String, unique=True)
+    second_email = sqlalchemy.Column(sqlalchemy.String)
     date_log_in = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
 
     clients = orm.relationship("Client", back_populates='user')
