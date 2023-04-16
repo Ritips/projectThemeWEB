@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from flask_restful import Resource, abort, reqparse
 from flask import jsonify
 from data import db_session
@@ -29,9 +30,12 @@ class CategoryResource(Resource):
         args = parser.parse_args()
         db_sess = db_session.create_session()
         category = db_sess.query(Category).get(id_category)
-        category.title = args["title"]
-        db_sess.commit()
-        return jsonify({"success": "OK"})
+        try:
+            category.title = args["title"]
+            db_sess.commit()
+            return jsonify({"success": "OK"})
+        except sqlalchemy.exc.IntegrityError:
+            abort(409, message=f"Category {args['title']} already exists")
 
     @staticmethod
     def delete(id_category):
@@ -55,8 +59,11 @@ class CategoryListResource(Resource):
     def post():
         args = parser.parse_args()
         category = Category()
-        category.title = args["title"]
-        db_sess = db_session.create_session()
-        db_sess.add(category)
-        db_sess.commit()
+        try:
+            category.title = args["title"]
+            db_sess = db_session.create_session()
+            db_sess.add(category)
+            db_sess.commit()
+        except sqlalchemy.exc.IntegrityError:
+            abort(409, message=f"Category {args['title']} already exists")
         return jsonify({"success": "OK"})

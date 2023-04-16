@@ -8,6 +8,6 @@ class Admin(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'admins'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    login_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    login_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), unique=True)
 
     user = orm.relationship("User", back_populates="admins")

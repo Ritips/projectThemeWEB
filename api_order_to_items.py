@@ -1,7 +1,5 @@
 from data import db_session
 from data.order_items import OrderItem
-from data.items import Item
-from data.orders import Order
 from flask_restful import Resource, abort, reqparse
 from flask import jsonify
 
@@ -9,18 +7,6 @@ from flask import jsonify
 parser = reqparse.RequestParser()
 parser.add_argument('id_order', type=int, required=True, location="args")
 parser.add_argument("id_item", type=int, required=True, location="args")
-
-
-def abort_if_order_not_exists(id_order):
-    db_sess = db_session.create_session()
-    if not db_sess.query(Order).get(id_order):
-        abort(404, message=f'Order {id_order} Not Found')
-
-
-def abort_if_item_not_exists(id_item):
-    db_sess = db_session.create_session()
-    if not db_sess.query(Item).get(id_item):
-        abort(404, message=f'Item {id_item} Not Found')
 
 
 def abort_if_order_item_not_exists(id_order_item):
@@ -59,8 +45,6 @@ class OrderItemListResource(Resource):
     @staticmethod
     def post():
         args = parser.parse_args()
-        abort_if_order_not_exists(args["id_order"])
-        abort_if_item_not_exists(args["id_item"])
         order_item = OrderItem()
         order_item.id_item = args["id_item"]
         order_item.id_order = args["id_order"]

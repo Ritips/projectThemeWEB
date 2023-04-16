@@ -8,6 +8,6 @@ class Category(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'categories'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    title = sqlalchemy.Column(sqlalchemy.String)
+    title = sqlalchemy.Column(sqlalchemy.String, unique=True)
 
     products = orm.relationship("Item", back_populates="category")
