@@ -20,6 +20,7 @@ import api_item
 import api_users
 from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
+from forms.privacy_forms import CheckPasswordForm, ChangePasswordForm
 
 
 app = Flask(__name__)
@@ -46,10 +47,34 @@ def catalog():
     return render_template('main_page.html', title="SystemSHOP", current_user=current_user)
 
 
-@app.route('/privacy_setting')
+@app.route('/privacy_settings')
 @login_required
 def privacy_setting():
-    return 'Coming soon'
+    return render_template("privacy_settings.html", title='Privacy settings', current_user=current_user)
+
+
+@app.route('/privacy_settings/check_password', methods=['GET', 'POST'])
+@login_required
+def check_password():
+    form = CheckPasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.password.data):
+            return redirect('/privacy_settings/change_password')
+        return render_template("privacy_check_password.html", current_user=current_user, title="SystemShop",
+                               message="Incorrect password", form=form)
+    return render_template("privacy_check_password.html", current_user=current_user, title="SystemShop", form=form)
+
+
+@app.route('/privacy_settings/check_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if form.password.data == form.repeat_password.data:
+            return redirect('/privacy_settings')
+        return render_template('privacy_change_password.html', current_user=current_user, title='SystemShop',
+                               message="Password missmatch", form=form)
+    return render_template('privacy_change_password.html', current_user=current_user, title='SystemShop', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
