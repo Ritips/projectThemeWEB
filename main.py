@@ -3,7 +3,7 @@ import api_order
 import api_order_to_items
 import api_type_of_goods
 from data import db_session
-from flask import redirect, Flask, render_template
+from flask import redirect, Flask, render_template, jsonify
 from data.clients import Client
 from data.orders import Order
 from data.admins import Admin
@@ -21,12 +21,19 @@ import api_users
 from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
 from forms.privacy_forms import CheckPasswordForm, ChangePasswordForm
+from flask_jwt_simple import JWTManager
+import tools
 
 
 app = Flask(__name__)
 api = Api(app)
 app.config["SECRET_KEY"] = "pythonWEBProjectSecretKey"
+app.config["JWT_SECRET_KEY"] = 'pythonWEBProjectSecretKey'
+app.config['JWT_EXPIRES'] = datetime.timedelta(hours=24)
+app.config["JWT_IDENTITY_CLAIM"] = 'user'
+app.config['JWT_HEADER_NAME'] = 'authorization'
 app.config["PERMANENT_SESSION_LIFETIME"] = datetime.timedelta(days=30)
+app.jwt = JWTManager(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -99,7 +106,8 @@ def register():
             return render_template('register.html', title='Registration', form=form,
                                    message='Password missmatch')
         params = {
-            "login": form.login.data, 'password': form.password.data, 'email': form.email.data,
+            "login": form.login.data, 'password': tools.encrypt_password(form.password.data),
+            'email': tools.encrypt_password(form.email.data),
             'name': form.name.data, 'surname': form.surname.data
         }
         response = requests.post('http://127.0.0.1:5000/api/users', params=params)

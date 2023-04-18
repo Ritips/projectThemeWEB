@@ -4,6 +4,7 @@ from flask import jsonify
 from data import db_session
 from data.authorisation_log import User
 from data.clients import Client
+import tools
 
 
 parser = reqparse.RequestParser()
@@ -81,9 +82,11 @@ class UserListResource(Resource):
         db_sess = db_session.create_session()
         user = User()
         user.login = args['login']
-        user.email = args['email']
+        dec_email = tools.decrypt_password(args['email'])
+        user.email = dec_email
         user.name, user.surname = args['name'], args['surname']
-        user.set_password(args["password"])
+        dec_password = tools.decrypt_password(args['password'])
+        user.set_password(dec_password)
         if args["phone"]:
             user.phone = args['phone']
         if args["second_email"]:
