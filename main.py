@@ -40,13 +40,28 @@ login_manager.init_app(app)
 
 @app.route('/')
 def main_page():
-    return render_template('main_page.html', title="SystemSHOP", current_user=current_user)
+    response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
+    if response:
+        categories = response.json()["categories"]
+        format_categories = [categories[i: i + 3] for i in range(0, len(categories), 3)]
+        return render_template('main_page.html', title="SystemSHOP", current_user=current_user,
+                               categories=format_categories)
+    return jsonify(response.json())
 
 
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
+
+
+@app.route('/certain_category/<int:category_id>')
+def get_items_certain_category(category_id):
+    response = requests.get('http://127.0.0.1:5000/api/items', params={"id_category": category_id})
+    print(response)  # test check code
+    if response:
+        print(response.json())  # test print
+    return render_template("main_page.html", title="SystemSHOP", current_user=current_user)  # temporal render_template
 
 
 @app.route('/catalog')

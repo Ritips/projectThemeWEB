@@ -21,8 +21,7 @@ class CategoryResource(Resource):
         abort_if_category_not_found(id_category)
         db_sess = db_session.create_session()
         category = db_sess.query(Category).get(id_category)
-        return jsonify({"categories": {
-            "title": category.title}})
+        return jsonify({"categories": category.to_dict(only=('id', 'title'))})
 
     @staticmethod
     def put(id_category):
@@ -52,8 +51,7 @@ class CategoryListResource(Resource):
     def get():
         db_sess = db_session.create_session()
         categories = db_sess.query(Category).all()
-        return jsonify({"categories": [
-                {"title": category.title} for category in categories]})
+        return jsonify({"categories": [category.to_dict(only=('id', 'title')) for category in categories]})
 
     @staticmethod
     def post():

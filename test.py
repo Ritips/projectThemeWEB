@@ -3,6 +3,16 @@ from requests import get, delete, post, put
 
 # http://127.0.0.1:5000/api/
 
+
+response = get('http://127.0.0.1:5000/api/items')
+exit()
+categories = ['category11', 'category12']
+for category in categories:
+    response = post('http://127.0.0.1:5000/api/type_of_goods', params={'title': category})
+    print(response, response.json())
+
+
+exit()
 print('----------------GET ALL-----------------')
 print('----------------users-------------------')
 
