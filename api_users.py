@@ -4,6 +4,7 @@ from flask import jsonify
 from data import db_session
 from data.authorisation_log import User
 from data.clients import Client
+from data.admins import Admin
 import tools
 
 
@@ -15,6 +16,8 @@ parser.add_argument("name", required=True, location="args")
 parser.add_argument("surname", required=True, location="args")
 parser.add_argument("phone", location="args")
 parser.add_argument("second_email", location="args")
+parser.add_argument("admin", type=bool, location="args", default=False)
+parser.add_argument('decrypt', type=bool, location='args', default=False)
 
 
 class UserResource(Resource):
@@ -82,21 +85,30 @@ class UserListResource(Resource):
         db_sess = db_session.create_session()
         user = User()
         user.login = args['login']
-        dec_email = tools.decrypt_password(args['email'])
+        if args['decrypt']:
+            dec_email = tools.decrypt_password(args['email'])
+            dec_password = tools.decrypt_password(args['password'])
+        else:
+            dec_email, dec_password = args['email'], args['password']
         user.email = dec_email
         user.name, user.surname = args['name'], args['surname']
-        dec_password = tools.decrypt_password(args['password'])
         user.set_password(dec_password)
         if args["phone"]:
             user.phone = args['phone']
         if args["second_email"]:
             user.set_second_email(args["second_email"])
-        client = Client()
-        client.user = user
-        db_sess.add(client)
+        if args['admin']:
+            admin = Admin()
+            admin.user = user
+            db_sess.add(admin)
+        else:
+            client = Client()
+            client.user = user
+            db_sess.add(client)
         try:
             db_sess.add(user)
             db_sess.commit()
+            return jsonify({"success": "OK"})
         except sqlalchemy.exc.IntegrityError as er:
             text = str(er.args)
             if 'login' in text:
@@ -106,4 +118,3 @@ class UserListResource(Resource):
             elif 'phone' in text:
                 text = f'Phone {args["phone"]} is already used'
             abort(409, message=text)
-        return jsonify({"success": "OK"})

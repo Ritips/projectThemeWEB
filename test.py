@@ -1,10 +1,21 @@
 from requests import get, delete, post, put
+import tools
 
 
 # http://127.0.0.1:5000/api/
 
 
 response = get('http://127.0.0.1:5000/api/items')
+print(response)
+password = 'password'
+email = 'admin@gmail.com'
+
+params = {
+    'login': "admin", 'password': password, 'email': email, 'name': 'Admin', 'surname': "One",
+    'admin': True
+}
+response = post('http://127.0.0.1:5000/api/users', params=params)
+print(response)
 exit()
 categories = ['category11', 'category12']
 for category in categories:
