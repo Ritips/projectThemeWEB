@@ -1,5 +1,196 @@
 {% extends "main_page.html" %}
 
 {% block content2 %}
+<h2 align="center"><b>Privacy settings</b></h2>
 
+<h3 align="center">Account information</h3>
+
+<div class="container" style="margin: 5%">
+    <div class="row" style="width: 100%; height^ 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Login</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">{{ current_user.login }}</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="width: 100%; height^ 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Name</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">{{ current_user.name }}</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="width: 100%; height^ 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Surname</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">{{ current_user.surname }}</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="width: 100%; height^ 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Email</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">{{ current_user.email }}</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="width: 100%; height^ 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Phone number</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                {% if current_user.phone %}
+                    <b style="width: 100%; height: 100%">{{ current_user.phone }}</b>
+                {% else %}
+                    <b style="width: 100%; height: 100%">Not defined</b>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="width: 100%; height^ 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Second email</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 1%; margin-bottom: 1%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                {% if current_user.second_email %}
+                    <b style="width: 100%; height: 100%">{{ current_user.second_email }}</b>
+                {% else %}
+                    <b style="width: 100%; height: 100%">Not defined</b>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<h3 align="center">Change private data</h3>
+
+
+<div class="container" style="margin: 5%">
+    <div class="row" style="width: 100%; height: 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Change Password</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 1px; height: 100%; background-color:#e3f2fd">
+                <a href="/privacy_settings/check_password" style="width: 100%; height: 100%">
+                    <button class="btn btn-sm btn-outline-secondary" style="width: 100%; height: 100%">
+                        Select option
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="width: 100%; height: 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Change Email</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 1px; height: 100%; background-color:#e3f2fd">
+                <a href="/privacy_settings/alert/1" style="width: 100%; height: 100%">
+                    <button class="btn btn-sm btn-outline-secondary" style="width: 100%; height: 100%">
+                        Select option
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% if message_id == 1 %}
+        <div class="alert alert-danger" role="alert">This Function is not available now</div>
+    {% endif %}
+    <div class="row" style="width: 100%; height: 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Change Phone Number</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 1px; height: 100%; background-color:#e3f2fd">
+                <a href="/privacy_settings/alert/2" style="width: 100%; height: 100%">
+                    <button class="btn btn-sm btn-outline-secondary" style="width: 100%; height: 100%">
+                        Select option
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% if message_id == 2 %}
+        <div class="alert alert-danger" role="alert">This Function is not available now</div>
+    {% endif %}
+    <div class="row" style="width: 100%; height: 100%">
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 2px solid; height: 100%;
+            background-color:#e3f2fd">
+                <b style="width: 100%; height: 100%">Change Second Email</b>
+            </div>
+        </div>
+        <div class="col" style="width: 100%; height: 100%; text-align: center; margin-bottom: 2%">
+            <div class="box" style="width: 100%; margin-top: 2%; margin-bottom: 2%; border: 1px; height: 100%; background-color:#e3f2fd">
+                <a href="/privacy_settings/alert/3" style="width: 100%; height: 100%">
+                    <button class="btn btn-sm btn-outline-secondary" style="width: 100%; height: 100%">
+                        Select option
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% if message_id == 3 %}
+        <div class="alert alert-danger" role="alert">This Function is not available now</div>
+    {% endif %}
+</div>
+
+{% if message %}
+    <div class="alert alert-danger" role="alert">{{ message }}</div>
+{% endif %}
 {% endblock %}

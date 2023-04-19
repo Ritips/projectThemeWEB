@@ -75,6 +75,13 @@ def privacy_setting():
     return render_template("privacy_settings.html", title='Privacy settings', current_user=current_user)
 
 
+@app.route('/privacy_settings/alert/<int:message_id>')
+@login_required
+def privacy_settings_alert_function(message_id):
+    return render_template("privacy_settings.html", title='Privacy settings',
+                           current_user=current_user, message_id=message_id)
+
+
 @app.route('/privacy_settings/check_password', methods=['GET', 'POST'])
 @login_required
 def check_password():
@@ -87,12 +94,16 @@ def check_password():
     return render_template("privacy_check_password.html", current_user=current_user, title="SystemShop", form=form)
 
 
-@app.route('/privacy_settings/check_password', methods=['GET', 'POST'])
+@app.route('/privacy_settings/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         if form.password.data == form.repeat_password.data:
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).get(current_user.id)
+            user.set_password(form.password.data)
+            db_sess.commit()
             return redirect('/privacy_settings')
         return render_template('privacy_change_password.html', current_user=current_user, title='SystemShop',
                                message="Password missmatch", form=form)
