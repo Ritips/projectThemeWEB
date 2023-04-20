@@ -32,7 +32,7 @@ class CategoryResource(Resource):
         db_sess = db_session.create_session()
         category = db_sess.query(Category).get(id_category)
         category2 = db_sess.query(Category).get(args['id'])
-        if category2:
+        if category2 and category != category2:
             db_sess.close()
             abort(409, message=f"Category {args['id']} already exists")
         try:
