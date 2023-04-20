@@ -1,0 +1,32 @@
+{% extends 'navbar_menu.html' %}
+
+{% block content3 %}
+<h2 align="center" style="margin: 5%">Adding category (fill a form)</h2>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <div class="box" style="border: 1px solid; width=80%; height: 40%;background-color:#e3f2fd" align="center">
+        <div class="row" style="margin: 1%">
+            <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
+                <b>{{ form.title.label }}</b>
+            </div>
+            <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
+                {{ form.title(class="form-control") }}
+                {% for error in form.title.error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row" style="margin: 1%">
+            <div class="col" style="margin-left:2%; margin-right:2%; margin-bottom: 1%">
+                {{ form.submit(type="submit", class="btn btn-primary", style="width: 100%; height: 95%;") }}
+            </div>
+        </div>
+    </div>
+</form>
+{% if message %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endif %}
+
+{% endblock %}

@@ -3,10 +3,15 @@ import tools
 
 
 # http://127.0.0.1:5000/api/
-
+params = {
+    "title": 'nice_title', "id_category": 1
+}
+response = post("http://127.0.0.1:5000/api/items", params=params)
+print(response.json())
 
 response = get('http://127.0.0.1:5000/api/items')
 print(response)
+exit()
 password = 'password'
 email = 'admin@gmail.com'
 

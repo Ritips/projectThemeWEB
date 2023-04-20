@@ -1,0 +1,60 @@
+{% extends "navbar_menu.html" %}
+
+{% block content3 %}
+<h1 align="center" style="margin:5%">Category Management</h1>
+<h2 align="center" style="margin: 2%">Existing categories</h2>
+<div class="container" style="margin-top: 5%" align="center">
+    <div class="box" style="border: 1px solid; background-color:#e3f2fd">
+        <div class="box" style="border: 1px solid">
+            <div class="row">
+                <div class="col"><b>Id category</b></div>
+                <div class="col"><b>Title</b></div>
+                <div class="col"><b>Option 1</b></div>
+                <div class="col"><b>Option 2</b></div>
+            </div>
+        </div>
+        {% for category in categories %}
+            <div class="row">
+                <div class="col"><b>{{ category.id }}</b></div>
+                <div class="col"><b>{{ category.title }}</b></div>
+                <div class="col">
+                    <a href="/categories/edit/{{ category.id }}">
+                        <button class="btn btn-warning" style="width: 95%; height: 90%">Edit</button>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="/categories/delete/{{ category.id }}">
+                        <button class="btn btn-danger" style="width: 95%; height: 90%">Delete</button>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<h2 align="center" style="margin: 5%">Add New Category</h2>
+<div class="container" style="margin-top: 5%" align="center">
+    <div class="box" style="border: 1px solid; background-color:#e3f2fd">
+        <div class="row" style="margin: 1%">
+            <div class="col" style="margin: 1%">
+                <p style="text-align: justify; font-size: 30px"><b>Category requires only one argument 'title'. Press button 'Add category' to fill a form</b></p>
+            </div>
+            <div class="col" style="margin: 1%">
+                <a href="/categories/add">
+                    <button class="btn btn-success" style="width: 95%; height: 80%; margin: 1%">Add Category</button>
+                </a>
+            </div>
+        </div>
+        <div class="row" style="margin:1%">
+            <div class="col" style="margin: 1%">
+                <div class="alert alert-warning" role="alert" style="width: 95%; height: 80%; text-align: justify; font-size: 20px">
+                    <b>Remember! When you delete category you will have to edit manually information about items which had this category.
+                    Otherwise item category_id will be None!</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}

@@ -3,7 +3,8 @@ import api_order
 import api_order_to_items
 import api_type_of_goods
 from data import db_session
-from flask import redirect, Flask, render_template, jsonify
+from flask import redirect, Flask, render_template, jsonify, request
+from flask_restful import abort
 from data.clients import Client
 from data.orders import Order
 from data.admins import Admin
@@ -21,6 +22,7 @@ import api_users
 from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
 from forms.privacy_forms import CheckPasswordForm, ChangePasswordForm
+from forms.category_form import CategoryEditForm, CategoryAddForm
 from flask_jwt_simple import JWTManager
 import tools
 
@@ -64,9 +66,62 @@ def get_items_certain_category(category_id):
     return render_template("main_page.html", title="SystemSHOP", current_user=current_user)  # temporal render_template
 
 
-@app.route('/catalog')
-def catalog():
-    return render_template('main_page.html', title="SystemSHOP", current_user=current_user)
+@app.route('/categories')
+@login_required
+def categories_management():
+    response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
+    categories = response.json()['categories'] if response else []
+    print(categories)
+    response = requests.get('http://127.0.0.1:5000/api/items').json()
+    print(response)
+    return render_template('management_categories.html',
+                           current_user=current_user, title='Categories', categories=categories)
+
+
+@app.route('/categories/delete/<int:id_category>')
+@login_required
+def delete_category(id_category):
+    requests.delete(f'http://127.0.0.1:5000/api/type_of_goods/{id_category}')
+    response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
+    categories = response.json()['categories'] if response else []
+    response = requests.get('http://127.0.0.1:5000/api/items').json()
+    return render_template('management_categories.html',
+                           current_user=current_user, title='Categories', categories=categories)
+
+
+@app.route('/categories/edit/<int:id_category>', methods=['GET', 'POST'])
+@login_required
+def edit_category(id_category):
+    form = CategoryEditForm()
+    if request.method == 'GET':
+        response = requests.get(f'http://127.0.0.1:5000/api/type_of_goods/{id_category}')
+        if not response:
+            abort(response.status_code, message=response.json()['message'])
+        info = response.json()["categories"]
+        form.title.data = info['title']
+        form.id_category.data = info['id']
+    if form.validate_on_submit():
+        params = {'id': form.id_category.data, 'title': form.title.data}
+        response = requests.put(f'http://127.0.0.1:5000/api/type_of_goods/{id_category}', params=params)
+        if response:
+            return redirect('/categories')
+        return render_template('edit_category.html', form=form, title="Editing category",
+                               current_user=current_user, message=response.json()['message'])
+    return render_template('edit_category.html', form=form, title="Editing category", current_user=current_user)
+
+
+@app.route('/categories/add', methods=['GET', 'POST'])
+@login_required
+def add_category():
+    form = CategoryAddForm()
+    if form.validate_on_submit():
+        params = {'title': form.title.data}
+        response = requests.post('http://127.0.0.1:5000/api/type_of_goods', params=params)
+        if not response:
+            return render_template("add_category.html", form=form, title="Adding category",
+                                   current_user=current_user, message=response.json()['message'])
+        return redirect('/categories')
+    return render_template('add_category.html', form=form, title="Adding category", current_user=current_user)
 
 
 @app.route('/privacy_settings')
