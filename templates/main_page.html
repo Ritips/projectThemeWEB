@@ -1,37 +1,6 @@
-{% extends "base.html" %}
+{% extends "navbar_menu.html" %}
 
-{% block content %}
-    {% if current_user.is_authenticated %}
-    <h1>Congratulations on registration</h1>
-    {% endif %}
-    <nav class="navbar fixed-top navbar-light" style="background-color:#e3f2fd">
-        <a class="navbar-brand">
-            <img src="/static/img/icon1.png" width="32" height="32" class="d-inline-block align-top" alt="">
-            <b>ProjectWEB SystemShop</b>
-        </a>
-        <a href="/">
-            <button type="button" class="btn btn-outline-secondary"><b>Catalog</b></button>
-        </a>
-        <div style="margin-left:50%">
-            {% if not current_user.is_authenticated %}
-                <a class="navbar-brand" href="/login">
-                    <button type="button" class="btn btn-outline-secondary"><b>Log in</b></button>
-                </a>
-                <a class="navbar-brand" href="/register">
-                    <button type="button" class="btn btn-outline-secondary"><b>Register</b></button>
-                </a>
-            {% else %}
-                <a class="navbar-brand" href="/privacy_settings">
-                    <img src="/static/img/icons8-male-user-32.png" width="32" height="32" class="d-inline-block align-top"
-                         alt="https://icons8.com/icon/7820/male-user">
-                    <b>{{ current_user.login }}</b>
-                </a>
-                <a class="navbar-brand" href="/logout">
-                    <button type="button" class="btn btn-outline-secondary"><b>Log out</b></button>
-                </a>
-            {% endif %}
-        </div>
-    </nav>
+{% block content3 %}
     <br>
     <br>
     <div class="container" style="margin-top: 5%">

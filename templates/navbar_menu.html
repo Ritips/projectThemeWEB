@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if current_user.is_authenticated %}
+        <h1 align="center" style="margin-top:5%">{{ current_user.clients }} {{ current_user.admins }}</h1>
+    {% endif %}
+    <nav class="navbar fixed-top navbar-light" style="background-color:#e3f2fd">
+        <a class="navbar-brand">
+            <img src="/static/img/icon1.png" width="32" height="32" class="d-inline-block align-top" alt="">
+            <b>ProjectWEB SystemShop</b>
+        </a>
+        {% if current_user.is_authenticated %}
+            <a href="/">
+                <button type="button" class="btn btn-outline-secondary"><b>Menu</b></button>
+            </a>
+        {% else %}
+            <a href="/" style="margin-right:20%">
+                <button type="button" class="btn btn-outline-secondary"><b>Menu</b></button>
+            </a>
+        {% endif %}
+        {% if current_user.admins %}
+            <a href="#">
+                <button type="button" class="btn btn-outline-secondary"><b>Log clients</b></button>
+            </a>
+            <a href="#">
+                <button type="button" class="btn btn-outline-secondary"><b>Log orders</b></button>
+            </a>
+            <a href="#">
+                <button type="button" class="btn btn-outline-secondary"><b>Manage items</b></button>
+            </a>
+            <a href="#">
+                <button type="button" class="btn btn-outline-secondary"><b>Manage categories</b></button>
+            </a>
+        {% elif current_user.clients %}
+            <a href="#" style="margin-right:20%">
+                <button type="button" class="btn btn-outline-secondary"><b>My Orders</b></button>
+            </a>
+        {% endif %}
+        <div style="margin-left:40%">
+            {% if not current_user.is_authenticated %}
+                <a class="navbar-brand" href="/login">
+                    <button type="button" class="btn btn-outline-secondary"><b>Log in</b></button>
+                </a>
+                <a class="navbar-brand" href="/register">
+                    <button type="button" class="btn btn-outline-secondary"><b>Register</b></button>
+                </a>
+            {% else %}
+                <a class="navbar-brand" href="/privacy_settings">
+                    <img src="/static/img/icons8-male-user-32.png" width="32" height="32" class="d-inline-block align-top"
+                         alt="https://icons8.com/icon/7820/male-user">
+                    <b>{{ current_user.login }}</b>
+                </a>
+                <a class="navbar-brand" href="/logout">
+                    <button type="button" class="btn btn-outline-secondary"><b>Log out</b></button>
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+<main role="main" class="container">
+    {% block content3 %}{% endblock %}
+</main>
+{% endblock %}
