@@ -17,7 +17,7 @@ parser.add_argument("surname", required=True, location="args")
 parser.add_argument("phone", location="args")
 parser.add_argument("second_email", location="args")
 parser.add_argument("admin", type=bool, location="args", default=False)
-parser.add_argument('decrypt', type=bool, location='args', default=False)
+parser.add_argument('decrypt', type=bool, location='args', default=True)
 
 
 class UserResource(Resource):

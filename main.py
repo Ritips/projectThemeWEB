@@ -151,6 +151,7 @@ def edit_item(id_item):
         return response.json()
     form = ItemEditForm()
     info = response.json()['items']
+    previous_id = info['id']
     if request.method == 'GET':
         form.id_item.data = info['id']
         form.title.data = info['title']
@@ -158,7 +159,7 @@ def edit_item(id_item):
         form.path_previous_image.data = info['img_path']
     if form.validate_on_submit():
         params = {'id': form.id_item.data, "title": form.title.data, "id_category": form.id_category.data,
-                  "img_path": info['img_path']}
+                  "img_path": info['img_path'], "previous_id": previous_id}
         image = form.image.data
         filename = None
         if image:
@@ -170,6 +171,7 @@ def edit_item(id_item):
             if image:
                 image.save(os.path.join('static/img', filename))
             return redirect('/management_items')
+        form.path_previous_image.data = params['img_path']
         return render_template('edit_item.html', form=form, current_user=current_user, title='Edit Item',
                                message=response.json()["message"])
     return render_template('edit_item.html', form=form, current_user=current_user, title="Edit Item")
