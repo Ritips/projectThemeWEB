@@ -13,7 +13,9 @@ parser.add_argument("id", type=int, required=False, location='args')
 def abort_if_category_not_found(id_category):
     db_sess = db_session.create_session()
     if not db_sess.query(Category).get(id_category):
+        db_sess.close()
         abort(404, message=f"Category {id_category} not Found")
+    db_sess.close()
 
 
 class CategoryResource(Resource):
@@ -73,8 +75,8 @@ class CategoryListResource(Resource):
             category.title = args["title"]
             db_sess.add(category)
             db_sess.commit()
-            db_sess.close()
         except sqlalchemy.exc.IntegrityError:
             db_sess.close()
             abort(409, message=f"Category {args['title']} already exists")
+        db_sess.close()
         return jsonify({"success": "OK"})

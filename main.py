@@ -75,9 +75,6 @@ def get_items_certain_category(category_id):
 def categories_management():
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
     categories = response.json()['categories'] if response else []
-    print(categories)
-    response = requests.get('http://127.0.0.1:5000/api/items').json()
-    print(response)
     return render_template('management_categories.html',
                            current_user=current_user, title='Categories', categories=categories)
 
@@ -155,10 +152,27 @@ def edit_item(id_item):
     form = ItemEditForm()
     info = response.json()['items']
     if request.method == 'GET':
+        form.id_item.data = info['id']
         form.title.data = info['title']
         form.id_category.data = info['id_category']
-        form.image.data = info['img_path']
-    return f'{id_item}'
+        form.path_previous_image.data = info['img_path']
+    if form.validate_on_submit():
+        params = {'id': form.id_item.data, "title": form.title.data, "id_category": form.id_category.data,
+                  "img_path": info['img_path']}
+        image = form.image.data
+        filename = None
+        if image:
+            filename = secure_filename(image.filename)
+            path = f'/static/img/{filename}'
+            params['img_path'] = path
+        response = requests.put(f'http://127.0.0.1:5000/api/items/{form.id_item.data}', params=params)
+        if response:
+            if image:
+                image.save(os.path.join('static/img', filename))
+            return redirect('/management_items')
+        return render_template('edit_item.html', form=form, current_user=current_user, title='Edit Item',
+                               message=response.json()["message"])
+    return render_template('edit_item.html', form=form, current_user=current_user, title="Edit Item")
 
 
 @app.route('/management_items/add', methods=['GET', 'POST'])
@@ -170,11 +184,11 @@ def add_item():
         id_category = form.id_category.data
         image = form.image.data
         if not image:
-            path = 'static/img/default.png'
+            path = '/static/img/default.png'
             filename = None
         else:
             filename = secure_filename(image.filename)
-            path = f'static/img/{filename}'
+            path = f'/static/img/{filename}'
         params = {'title': title, "id_category": id_category, "img_path": path}
         response = requests.post('http://127.0.0.1:5000/api/items', params=params)
         if response:

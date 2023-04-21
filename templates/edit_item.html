@@ -1,0 +1,72 @@
+{% extends "navbar_menu.html" %}
+
+{% block content3 %}
+<h1 align="center" style="margin: 5%">Editing information about item</h1>
+
+<form action="" method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <div class="box" style="border: 1px solid; width=80%; height: 40%;background-color:#e3f2fd" align="center">
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        <b>{{ form.id_item.label }}</b>
+      </div>
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        {{ form.id_item(class="form-control") }}
+        {% for error in form.id_item.errors %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        <b>{{ form.title.label }}</b>
+      </div>
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        {{ form.title(class="form-control") }}
+        {% for error in form.title.errors %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        <b>{{ form.id_category.label }}</b>
+      </div>
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        {{ form.id_category(class="form-control") }}
+        {% for error in form.id_category.errors %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        <img src="{{ form.path_previous_image.data }}" class="img-fluid img-thumbnail rounded float-left" alt="NOT FOUND">
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px"><b>{{ form.image.label}}</b></div>
+      <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
+        {{ form.image(class="form-control", type="file") }}
+        {% for error in form.image.errors %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left: 2%; margin-right: 2%;font-size:20px">
+        {{ form.submit(type="submit", class="btn btn-primary", style="width: 100%; height: 95%;") }}
+      </div>
+    </div>
+  </div>
+</form>
+
+{% if message %}
+  <div class="alert alert-danger" role="alert">{{ message }}</div>
+{% endif %}
+{% endblock %}
