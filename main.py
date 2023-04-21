@@ -64,7 +64,7 @@ def load_user(user_id):
 @app.route('/certain_category/<int:category_id>')
 def get_items_certain_category(category_id):
     response = requests.get('http://127.0.0.1:5000/api/items', params={"id_category": category_id})
-    print(response)  # test check code
+    print(response)  # test check response
     if response:
         print(response.json())  # test print
     return render_template("main_page.html", title="SystemSHOP", current_user=current_user)  # temporal render_template
