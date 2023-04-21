@@ -14,6 +14,7 @@ class AdminResource(Resource):
     def get(admin_id):
         db_sess = db_session.create_session()
         admin = db_sess.query(Admin).get(admin_id)
+        db_sess.close()
         if not admin:
             abort(404, message=f"Admin {admin_id} not Found")
         return jsonify({
@@ -28,12 +29,15 @@ class AdminResource(Resource):
         db_sess = db_session.create_session()
         admin = db_sess.query(Admin).get(admin_id)
         if not admin:
+            db_sess.close()
             abort(404, message=f"Admin {admin_id} not Found")
         try:
             admin.login_id = args["login_id"]
             db_sess.commit()
+            db_sess.close()
             return jsonify({"success": "OK"})
         except sqlalchemy.exc.IntegrityError:
+            db_sess.close()
             abort(409, message=f"Admin {args['login_id']} already exists")
 
     @staticmethod
@@ -41,9 +45,11 @@ class AdminResource(Resource):
         db_sess = db_session.create_session()
         admin = db_sess.query(Admin).get(admin_id)
         if not admin:
+            db_sess.close()
             abort(404, message=f"Admin {admin_id} not Found")
         db_sess.delete(admin)
         db_sess.commit()
+        db_sess.close()
         return jsonify({"success": "OK"})
 
 
@@ -52,6 +58,7 @@ class AdminListResource(Resource):
     def get():
         db_sess = db_session.create_session()
         admins = db_sess.query(Admin).all()
+        db_sess.close()
         return jsonify({
             "admins": [
                 {
@@ -69,6 +76,8 @@ class AdminListResource(Resource):
             admin.login_id = args["login_id"]
             db_sess.add(admin)
             db_sess.commit()
+            db_sess.close()
             return jsonify({"success": "OK"})
         except sqlalchemy.exc.IntegrityError:
+            db_sess.close()
             abort(409, message=f"Admin {args['login_id']} already exists")

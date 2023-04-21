@@ -15,6 +15,7 @@ class ItemResource(Resource):
     def get(id_item):
         db_sess = db_session.create_session()
         items = db_sess.query(Item).get(id_item)
+        db_sess.close()
         if not items:
             abort(404, message=f"Item {id_item} not found")
         return jsonify({"items": items.to_dict(
@@ -28,6 +29,7 @@ class ItemResource(Resource):
             abort(404, message=f"Item {id_item} not found")
         db_sess.delete(items)
         db_sess.commit()
+        db_sess.close()
         return jsonify({"success": "OK"})
 
 
@@ -38,8 +40,10 @@ class ItemListResource(Resource):
         db_sess = db_session.create_session()
         if args['id_category'] is None:
             items = db_sess.query(Item).all()
+            db_sess.close()
         else:
             items = db_sess.query(Item).filter(Item.id_category == args['id_category']).all()
+            db_sess.close()
             if not items:
                 abort(404, message=f"{args['id_category']} not Found")
         return jsonify({"items": [item.to_dict(
@@ -55,4 +59,5 @@ class ItemListResource(Resource):
         db_sess = db_session.create_session()
         db_sess.add(item)
         db_sess.commit()
+        db_sess.close()
         return jsonify({"success": "OK"})

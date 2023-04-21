@@ -23,7 +23,11 @@ from forms.login_form import LoginForm
 from forms.register_form import RegisterForm
 from forms.privacy_forms import CheckPasswordForm, ChangePasswordForm
 from forms.category_form import CategoryEditForm, CategoryAddForm
+from forms.ItemForm import ItemAddForm, ItemEditForm
 from flask_jwt_simple import JWTManager
+from werkzeug.datastructures import CombinedMultiDict
+from werkzeug.utils import secure_filename
+import os
 import tools
 
 
@@ -84,7 +88,6 @@ def delete_category(id_category):
     requests.delete(f'http://127.0.0.1:5000/api/type_of_goods/{id_category}')
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
     categories = response.json()['categories'] if response else []
-    response = requests.get('http://127.0.0.1:5000/api/items').json()
     return render_template('management_categories.html',
                            current_user=current_user, title='Categories', categories=categories)
 
@@ -122,6 +125,66 @@ def add_category():
                                    current_user=current_user, message=response.json()['message'])
         return redirect('/categories')
     return render_template('add_category.html', form=form, title="Adding category", current_user=current_user)
+
+
+@app.route('/management_items')
+@login_required
+def items_management():
+    response = requests.get("http://127.0.0.1:5000/api/items")
+    if response:
+        return render_template('management_items.html',
+                               title="Items", current_user=current_user, items=response.json()['items'])
+    return jsonify(response.json())
+
+
+@app.route('/management_items/delete/<int:id_item>')
+@login_required
+def delete_item(id_item):
+    response = requests.delete(f"http://127.0.0.1:5000/api/items/{id_item}")
+    if response:
+        return redirect('/management_items')
+    return response.json()
+
+
+@app.route('/management_items/edit/<int:id_item>', methods=['GET', 'POST'])
+@login_required
+def edit_item(id_item):
+    response = requests.get(f"http://127.0.0.1:5000/api/items/{id_item}")
+    if not response:
+        return response.json()
+    form = ItemEditForm()
+    info = response.json()['items']
+    if request.method == 'GET':
+        form.title.data = info['title']
+        form.id_category.data = info['id_category']
+        form.image.data = info['img_path']
+    return f'{id_item}'
+
+
+@app.route('/management_items/add', methods=['GET', 'POST'])
+@login_required
+def add_item():
+    form = ItemAddForm(CombinedMultiDict((request.files, request.form)))
+    if form.validate_on_submit():
+        title = form.title.data
+        id_category = form.id_category.data
+        image = form.image.data
+        if not image:
+            path = 'static/img/default.png'
+            filename = None
+        else:
+            filename = secure_filename(image.filename)
+            path = f'static/img/{filename}'
+        params = {'title': title, "id_category": id_category, "img_path": path}
+        response = requests.post('http://127.0.0.1:5000/api/items', params=params)
+        if response:
+            if image:
+                image.save(os.path.join('static/img', filename))
+            return redirect('/management_items')
+        return render_template('add_item.html',
+                               form=form, current_user=current_user,
+                               title='Add Item', message=response.json()['message'])
+    return render_template('add_item.html', form=form, current_user=current_user, title='Add Item')
 
 
 @app.route('/privacy_settings')

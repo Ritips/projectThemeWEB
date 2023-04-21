@@ -13,6 +13,7 @@ class ClientResource(Resource):
     def get(id_client):
         db_sess = db_session.create_session()
         client = db_sess.query(Client).get(id_client)
+        db_sess.close()
         if not client:
             abort(404, message=f"Client {id_client} not Found")
         return jsonify({"clients": client.to_dict(only=('id', 'login_id'))})
@@ -22,9 +23,11 @@ class ClientResource(Resource):
         db_sess = db_session.create_session()
         client = db_sess.query(Client).get(id_client)
         if not client:
+            db_sess.close()
             abort(404, message=f"Client {id_client} not Found")
         db_sess.delete(client)
         db_sess.commit()
+        db_sess.close()
         return jsonify({"success": "OK"})
 
     @staticmethod
@@ -33,10 +36,12 @@ class ClientResource(Resource):
         db_sess = db_session.create_session()
         client = db_sess.query(Client).get(id_client)
         if not client:
+            db_sess.close()
             abort(404, message=f"Client {id_client} not Found")
         try:
             client.login_id = args["user_id"]
             db_sess.commit()
+            db_sess.close()
             return jsonify({"success": "OK"})
         except sqlalchemy.exc.IntegrityError:
             abort(409, message=f"Client who was already connected to user with id: {args['user_id']} already exists")
@@ -47,6 +52,7 @@ class ClientListResource(Resource):
     def get():
         db_sess = db_session.create_session()
         clients = db_sess.query(Client).all()
+        db_sess.close()
         return jsonify({"clients": [
             item.to_dict(only=('id', 'login_id')) for item in clients
         ]})
@@ -60,6 +66,8 @@ class ClientListResource(Resource):
             client.login_id = args["user_id"]
             db_sess.add(client)
             db_sess.commit()
+            db_sess.close()
             return jsonify({"success": "OK"})
         except sqlalchemy.exc.IntegrityError:
+            db_sess.close()
             abort(409, message=f"Client who was already connected to user with id: {args['user_id']} already exists")
