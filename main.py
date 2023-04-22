@@ -329,6 +329,7 @@ def edit_client(id_client):
             if not response:
                 return render_template('ClientEditLog.html', current_user=current_user,
                                        title='EditClient', message=response.json()['message'], form=form)
+            return redirect('/client_log')
         else:
             params = {"user_id": user_id, 'client_id': id_client}
             response = requests.put(f'http://127.0.0.1:5000/api/clients/{id_client}', params=params)
