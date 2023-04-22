@@ -333,7 +333,7 @@ def edit_client(id_client):
             params = {"user_id": user_id, 'client_id': id_client}
             response = requests.put(f'http://127.0.0.1:5000/api/clients/{id_client}', params=params)
             if response:
-                return
+                return redirect('/client_log')
             return render_template('ClientEditLog.html', current_user=current_user,
                                    title='EditClient', message=response.json()['message'], form=form)
     return render_template('ClientEditLog.html', current_user=current_user, title='EditClient', form=form)
