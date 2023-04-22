@@ -30,7 +30,6 @@ from werkzeug.utils import secure_filename
 import os
 import tools
 
-
 app = Flask(__name__)
 api = Api(app)
 app.config["SECRET_KEY"] = "pythonWEBProjectSecretKey"
@@ -47,11 +46,13 @@ login_manager.init_app(app)
 @app.route('/')
 def main_page():
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
-    if response:
+    response2 = requests.get('http://127.0.0.1:5000/api/items')
+    if response and response2:
         categories = response.json()["categories"]
+        items = response2.json()["items"]
         format_categories = [categories[i: i + 3] for i in range(0, len(categories), 3)]
-        return render_template('main_page.html', title="SystemSHOP", current_user=current_user,
-                               categories=format_categories)
+        return render_template('categories.html', title="SystemSHOP", current_user=current_user,
+                               categories=format_categories, items=items)
     return jsonify(response.json())
 
 
