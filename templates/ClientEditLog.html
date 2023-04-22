@@ -22,11 +22,11 @@
     <div class="box" style="border: 1px solid; width=80%; height: 40%;background-color:#e3f2fd" align="center">
         <div class="row" style="margin: 1%">
             <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
-                <b>{{ form.bool.label }}</b>
+                <b>{{ form.bool_admin.label }}</b>
             </div>
             <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
-                {{ form.bool(class="form-control", type="radio") }}
-                {% for error in form.bool.error %}
+                {{ form.bool_admin(class="form-group", type="checkbox") }}
+                {% for error in form.bool_admin.error %}
                     <div class="alert alert-danger" role="alert">{{ error }}</div>
                 {% endfor %}
             </div>
