@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% if current_user.is_authenticated %}
-        <h1 align="center" style="margin-top:5%">{{ current_user.clients }} {{ current_user.admins }}</h1>
-    {% endif %}
     <nav class="navbar fixed-top navbar-light" style="background-color:#e3f2fd">
         <a class="navbar-brand">
             <img src="/static/img/icon1.png" width="32" height="32" class="d-inline-block align-top" alt="">

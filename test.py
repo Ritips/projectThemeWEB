@@ -3,6 +3,11 @@ import tools
 
 
 # http://127.0.0.1:5000/api/
+response = get("http://127.0.0.1:5000/api/clients").json()['clients']
+print(response)
+response = get("http://127.0.0.1:5000/api/clients")
+print(response.json()['clients'])
+exit()
 params = {
     "title": 'nice_title', "id_category": 1
 }

@@ -6,6 +6,7 @@ from data.items import Item
 
 parser = reqparse.RequestParser()
 parser.add_argument('id', type=int, location='args')
+parser.add_argument('previous_id', type=int, location='args')
 parser.add_argument("title", location="args")
 parser.add_argument("id_category", type=int, location="args", default=None)
 parser.add_argument("img_path", location="args", default='/static/img/default.png')
@@ -36,13 +37,13 @@ class ItemResource(Resource):
     @staticmethod
     def put(id_item):
         db_sess = db_session.create_session()
-        item = db_sess.query(Item).get(id_item)
+        args = parser.parse_args()
+        item = db_sess.query(Item).get(args['previous_id'])
         if not item:
             db_sess.close()
             abort(404, message=f"Item {id_item} NOT FOUND")
-        args = parser.parse_args()
-        item2 = db_sess.query(Item).get(args['id'])
-        if item2 != item:
+        item2 = db_sess.query(Item).get(id_item)
+        if item2 and args['previous_id'] != id_item:
             db_sess.close()
             abort(409, message=f'Item with id: {args["id"]} already exists')
         item.id, item.title, item.id_category = args['id'], args['title'], args['id_category']

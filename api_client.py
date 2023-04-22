@@ -13,10 +13,14 @@ class ClientResource(Resource):
     def get(id_client):
         db_sess = db_session.create_session()
         client = db_sess.query(Client).get(id_client)
-        db_sess.close()
+        user = client.user
         if not client:
+            db_sess.close()
             abort(404, message=f"Client {id_client} not Found")
-        return jsonify({"clients": client.to_dict(only=('id', 'login_id'))})
+        output = jsonify({'clients': {"client": client.to_dict(only=('id', 'login_id')), "user": user.to_dict(
+            only=("id", "login", "name", "surname", "email", "phone", "second_email"))}})
+        db_sess.close()
+        return output
 
     @staticmethod
     def delete(id_client):
@@ -52,10 +56,11 @@ class ClientListResource(Resource):
     def get():
         db_sess = db_session.create_session()
         clients = db_sess.query(Client).all()
+        output = {"clients": [{"client": item.to_dict(only=('id', 'login_id')), "user": item.user.to_dict(
+            only=("id", "login", "name", "surname", "email", "phone", "second_email")
+        )} for item in clients]}
         db_sess.close()
-        return jsonify({"clients": [
-            item.to_dict(only=('id', 'login_id')) for item in clients
-        ]})
+        return output
 
     @staticmethod
     def post():

@@ -9,7 +9,8 @@ fernet = Fernet(key)
 
 def create_jwt_generate_response(user):
     cp_user = user
-    cp_user.set_password(None)
+    cp_user.set_password('')
+    c = cp_user.to_dict(only=('id', 'login'))
     j_token = {"token": create_jwt(identity=cp_user)}
     return jsonify(j_token)
 
