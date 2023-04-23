@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../Рабочая_папка/Python/.idea/Python.iml" filepath="$PROJECT_DIR$/../../Рабочая_папка/Python/.idea/Python.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/projectThemeWEB.iml" filepath="$PROJECT_DIR$/.idea/projectThemeWEB.iml" />
     </modules>
   </component>

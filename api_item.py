@@ -10,6 +10,8 @@ parser.add_argument('previous_id', type=int, location='args')
 parser.add_argument("title", location="args")
 parser.add_argument("id_category", type=int, location="args", default=None)
 parser.add_argument("img_path", location="args", default='/static/img/default.png')
+parser.add_argument("cost", type=int, location="args")
+parser.add_argument("description", location="args", default='-')
 
 
 class ItemResource(Resource):
@@ -21,7 +23,7 @@ class ItemResource(Resource):
         if not items:
             abort(404, message=f"Item {id_item} not found")
         return jsonify({"items": items.to_dict(
-            only=("id", "title", "id_category", "img_path"))})
+            only=("id", "title", "id_category", "img_path", "cost", "description"))})
 
     @staticmethod
     def delete(id_item):
@@ -67,7 +69,7 @@ class ItemListResource(Resource):
             if not items:
                 abort(404, message=f"{args['id_category']} not Found")
         return jsonify({"items": [item.to_dict(
-            only=("id", 'title', 'id_category', 'img_path')) for item in items]})
+            only=("id", 'title', 'id_category', 'img_path', "cost", "description")) for item in items]})
 
     @staticmethod
     def post():
