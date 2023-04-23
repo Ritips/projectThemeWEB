@@ -66,13 +66,13 @@ def load_user(user_id):
 def get_items_certain_category(category_id):
     response = requests.get('http://127.0.0.1:5000/api/items', params={"id_category": category_id})
     response2 = requests.get(f'http://127.0.0.1:5000/api/type_of_goods/{category_id}')
-    print(response2)  # test check response
-    if response and response2:
-        print(response.json())  # test print
+    category = response2.json()["categories"]
+    if response:
         items = response.json()["items"]
-        category = response2.json()["categories"]
-        return render_template("one_category.html", title="SystemSHOP", current_user=current_user,
-                               items=items, category=category)  # temporal render_template
+        return render_template("one_category.html", title=category["title"], current_user=current_user,
+                               items=items, category=category, response=True)  # temporal render_template
+    return render_template("one_category.html", title=category["title"], current_user=current_user,
+                           items=None, category=category, response=False)
 
 
 @app.route('/categories')
