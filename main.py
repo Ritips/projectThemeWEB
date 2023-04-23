@@ -290,6 +290,67 @@ def logout():
     return redirect('/')
 
 
+@app.route('/client_log')
+@login_required
+def client_log():
+    response = requests.get('http://127.0.0.1:5000/api/clients')
+    if response:
+        return render_template("ClientsLog.html", clients=response.json()['clients'], title='ClientLog',
+                               current_user=current_user)
+    return response.json()
+
+
+@app.route('/client_log/delete_client/<int:id_client>')
+@login_required
+def delete_client(id_client):
+    response = requests.delete(f'http://127.0.0.1:5000/api/clients/{id_client}')
+    if response:
+        return redirect('/client_log')
+    return response.json()
+
+
+@app.route('/client_log/edit_client/<int:id_client>', methods=['GET', 'POST'])
+@login_required
+def edit_client(id_client):
+    from forms.client_form import EditClientForm
+    response = requests.get(f"http://127.0.0.1:5000/api/clients/{id_client}")
+    if not response:
+        return response.json()
+    form = EditClientForm()
+    info = response.json()['clients']
+    if request.method == 'GET':
+        form.id_client.data = info['client']['id']
+        form.bool_admin.data = False
+    if form.validate_on_submit():
+        id_client = form.id_client.data
+        user_id = info['client']['login_id']
+        if form.bool_admin.data:
+            params = {'login_id': user_id}
+            response = requests.post('http://127.0.0.1:5000/api/admins', params=params)
+            if not response:
+                return render_template('ClientEditLog.html', current_user=current_user,
+                                       title='EditClient', message=response.json()['message'], form=form)
+            response = requests.delete(f'http://127.0.0.1:5000/api/clients/{id_client}')
+            if not response:
+                return render_template('ClientEditLog.html', current_user=current_user,
+                                       title='EditClient', message=response.json()['message'], form=form)
+            return redirect('/client_log')
+        else:
+            params = {"user_id": user_id, 'client_id': id_client}
+            response = requests.put(f'http://127.0.0.1:5000/api/clients/{id_client}', params=params)
+            if response:
+                return redirect('/client_log')
+            return render_template('ClientEditLog.html', current_user=current_user,
+                                   title='EditClient', message=response.json()['message'], form=form)
+    return render_template('ClientEditLog.html', current_user=current_user, title='EditClient', form=form)
+
+
+@app.route('/client_log/check_orders/<int:id_client>')
+@login_required
+def check_client_orders(id_client):
+    pass
+
+
 def main():
     db_session.global_init('db/Supercell_is_piece_of_sheet10.sqlite')
     api.add_resource(api_item.ItemResource, "/api/items/<int:id_item>")
