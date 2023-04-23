@@ -11,6 +11,8 @@ class Item(SqlAlchemyBase, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String)
     id_category = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('categories.id'))
     img_path = sqlalchemy.Column(sqlalchemy.String)
+    cost = sqlalchemy.Column(sqlalchemy.Integer)
+    description = sqlalchemy.Column(sqlalchemy.String)
 
     category = orm.relationship("Category", back_populates="products")
     orders = orm.relationship("OrderItem", back_populates="items")
