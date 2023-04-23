@@ -1,0 +1,14 @@
+{% extends "navbar_menu.html" %}
+
+{% block content3 %}
+<h1 style="margin-top: 10%;" align="center">{{category.title}}</h1>
+<div class="box" style="margin-top: 5%; margin-left: -20%">
+    {% for item in items %}
+        <div class="row">
+            <div class="col"><img src={{item.img_path}} width="300" height="300" class="img-fluid img-thumbnail rounded float-left" alt=""></div>
+            <div class="col" style="margin-left: -50%;"><h3>{{ item.title }}</h3></div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
