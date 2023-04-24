@@ -1,13 +1,27 @@
 {% extends "main_page.html" %}
 
 {% block content2 %}
-<div class="box" style="margin-top: 5%;">
+<table style="margin-top: 5%" align="center">
     {% for item in items %}
-        <div class="row">
-            <div class="col"><img src={{item.img_path}} width="300" height="300" class="img-fluid img-thumbnail rounded float-left" alt="">
-                <b>{{ item.title }}</b><b style="margin-left: 10%">{{ item.cost }}$</b></div>
-        </div>
+        <tr>
+            <td style="width: 29%; margin: 10px"><img src={{item.img_path}} width="300" height="300" class="img-fluid img-thumbnail rounded float-left" alt=""></td>
+            <td style="width: 71%">
+                <table style="height: 800%" valign="top">
+                    <thead>
+                        <tr>
+                            <th colspan="1" style="width: 100%" align="left">{{ item.title }}</th>
+                            <th colspan="1" style="width: 60px">{{ item.cost }}$</th>
+                            <th colspan="1" style="width: 32px"><img src="/static/img/icon1.png" width="32" height="32" class="d-inline-block align-top" alt=""></th>
+                        </tr>
+                    </thead>
+                    <tbody valign="top">
+                        <tr>
+                            <td rowspan="10"><p>{{ item.description }}</p></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
     {% endfor %}
-</div>
-
+</table>
 {% endblock %}
