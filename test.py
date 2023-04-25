@@ -1,7 +1,12 @@
+import requests
 from requests import get, delete, post, put
 import tools
 
 
+response = requests.get('http://127.0.0.1:5000/get_cart')
+print(response.reason)
+
+exit()
 # http://127.0.0.1:5000/api/
 response = get("http://127.0.0.1:5000/api/clients").json()['clients']
 print(response)

@@ -1,31 +1,13 @@
 {% extends "main_page.html" %}
 
 {% block content2 %}
-<table style="margin-top: 5%" align="center">
+<div class="box" style="margin-top: 5%;">
     {% for item in items %}
-        <tr>
-            <td style="width: 29%; margin: 10px"><img src={{item.img_path}} width="300" height="300" class="img-fluid img-thumbnail rounded float-left" alt=""></td>
-            <td style="width: 71%">
-                <table style="height: 800%" valign="top">
-                    <thead>
-                        <tr>
-                            <th colspan="1" style="width: 85%" align="left">{{ item.title }}</th>
-                            <th colspan="1" style="width: 60px; margin-right: 20px">{{ item.cost }}$</th>
-                            <th colspan="1" style="width: 50px">
-                                <a href="#">
-                                    <button type="button" class="btn btn-outline-secondary"><img src="/static/img/ShoppingCart.png" width="34" height="32" class="d-inline-block align-top" alt=""></button>
-                                </a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody valign="top">
-                        <tr>
-                            <td rowspan="10"><p>{{ item.description }}</p></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
+        <div class="row">
+            <div class="col"><img src={{item.img_path}} width="300" height="300" class="img-fluid img-thumbnail rounded float-left" alt="">
+                <b>{{ item.title }}</b><b style="margin-left: 10%">{{ item.cost }}$</b></div>
+        </div>
     {% endfor %}
-</table>
+</div>
+
 {% endblock %}

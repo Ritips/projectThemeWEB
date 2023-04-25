@@ -6,9 +6,11 @@ import datetime
 
 
 parser = reqparse.RequestParser()
-parser.add_argument("client_id", type=int, required=True, location="args")
+parser.add_argument("client_id", type=int, required=False, location="args")
 parser.add_argument("date_order", location="args", default=-1)
 parser.add_argument("deliver_days", type=int, location="args", default=-1)
+parser.add_argument("get_items", type=bool, default=False, location="args")
+parser.add_argument("check_client", type=bool, default=False, location='args')
 
 
 def abort_if_wrong_date(date):
@@ -78,8 +80,12 @@ class OrderResource(Resource):
 class OrderListResource(Resource):
     @staticmethod
     def get():
+        args = parser.parse_args()
         db_sess = db_session.create_session()
-        orders = db_sess.query(Order).all()
+        orders = db_sess.query(Order).all() if not args['check_client'] else db_sess.query(Order).filter(
+            Order.client_id == args['client_id']
+        ).all()
+
         return jsonify({
             "orders": [
                 {"id": order.id, "client_id": order.client_id, "date_order": order.date_order,

@@ -3,15 +3,9 @@ import api_order
 import api_order_to_items
 import api_type_of_goods
 from data import db_session
-from flask import redirect, Flask, render_template, jsonify, request
+from flask import redirect, Flask, render_template, jsonify, request, session
 from flask_restful import abort
-from data.clients import Client
-from data.orders import Order
-from data.admins import Admin
-from data.order_items import OrderItem
 from data.authorisation_log import User
-from data.items import Item
-from data.type_of_goods import Category
 from flask_restful import Api
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 import datetime
@@ -56,6 +50,11 @@ def main_page():
     return jsonify(response.json())
 
 
+def check_access():
+    if not current_user.admins:
+        abort(403, message="No access")
+
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
@@ -78,6 +77,7 @@ def get_items_certain_category(category_id):
 @app.route('/categories')
 @login_required
 def categories_management():
+    check_access()
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
     categories = response.json()['categories'] if response else []
     return render_template('management_categories.html',
@@ -87,6 +87,7 @@ def categories_management():
 @app.route('/categories/delete/<int:id_category>')
 @login_required
 def delete_category(id_category):
+    check_access()
     requests.delete(f'http://127.0.0.1:5000/api/type_of_goods/{id_category}')
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
     categories = response.json()['categories'] if response else []
@@ -97,6 +98,7 @@ def delete_category(id_category):
 @app.route('/categories/edit/<int:id_category>', methods=['GET', 'POST'])
 @login_required
 def edit_category(id_category):
+    check_access()
     form = CategoryEditForm()
     if request.method == 'GET':
         response = requests.get(f'http://127.0.0.1:5000/api/type_of_goods/{id_category}')
@@ -118,6 +120,7 @@ def edit_category(id_category):
 @app.route('/categories/add', methods=['GET', 'POST'])
 @login_required
 def add_category():
+    check_access()
     form = CategoryAddForm()
     if form.validate_on_submit():
         params = {'title': form.title.data}
@@ -132,6 +135,7 @@ def add_category():
 @app.route('/management_items')
 @login_required
 def items_management():
+    check_access()
     response = requests.get("http://127.0.0.1:5000/api/items")
     if response:
         return render_template('management_items.html',
@@ -142,6 +146,7 @@ def items_management():
 @app.route('/management_items/delete/<int:id_item>')
 @login_required
 def delete_item(id_item):
+    check_access()
     response = requests.delete(f"http://127.0.0.1:5000/api/items/{id_item}")
     if response:
         return redirect('/management_items')
@@ -151,6 +156,7 @@ def delete_item(id_item):
 @app.route('/management_items/edit/<int:id_item>', methods=['GET', 'POST'])
 @login_required
 def edit_item(id_item):
+    check_access()
     response = requests.get(f"http://127.0.0.1:5000/api/items/{id_item}")
     if not response:
         return response.json()
@@ -162,9 +168,13 @@ def edit_item(id_item):
         form.title.data = info['title']
         form.id_category.data = info['id_category']
         form.path_previous_image.data = info['img_path']
+        form.cost.data = info["cost"]
+        form.description.data = info['description']
+
     if form.validate_on_submit():
         params = {'id': form.id_item.data, "title": form.title.data, "id_category": form.id_category.data,
-                  "img_path": info['img_path'], "previous_id": previous_id}
+                  "img_path": info['img_path'], "previous_id": previous_id, 'cost': form.cost.data,
+                  'description': form.description.data}
         image = form.image.data
         filename = None
         if image:
@@ -185,18 +195,22 @@ def edit_item(id_item):
 @app.route('/management_items/add', methods=['GET', 'POST'])
 @login_required
 def add_item():
+    check_access()
     form = ItemAddForm(CombinedMultiDict((request.files, request.form)))
     if form.validate_on_submit():
         title = form.title.data
         id_category = form.id_category.data
         image = form.image.data
+        description = form.description.data
+        cost = form.cost.data
         if not image:
             path = '/static/img/default.png'
             filename = None
         else:
             filename = secure_filename(image.filename)
             path = f'/static/img/{filename}'
-        params = {'title': title, "id_category": id_category, "img_path": path}
+        params = {'title': title, "id_category": id_category, "img_path": path,
+                  "cost": cost, "description": description}
         response = requests.post('http://127.0.0.1:5000/api/items', params=params)
         if response:
             if image:
@@ -293,6 +307,7 @@ def logout():
 @app.route('/client_log')
 @login_required
 def client_log():
+    check_access()
     response = requests.get('http://127.0.0.1:5000/api/clients')
     if response:
         return render_template("ClientsLog.html", clients=response.json()['clients'], title='ClientLog',
@@ -303,6 +318,7 @@ def client_log():
 @app.route('/client_log/delete_client/<int:id_client>')
 @login_required
 def delete_client(id_client):
+    check_access()
     response = requests.delete(f'http://127.0.0.1:5000/api/clients/{id_client}')
     if response:
         return redirect('/client_log')
@@ -312,6 +328,7 @@ def delete_client(id_client):
 @app.route('/client_log/edit_client/<int:id_client>', methods=['GET', 'POST'])
 @login_required
 def edit_client(id_client):
+    check_access()
     from forms.client_form import EditClientForm
     response = requests.get(f"http://127.0.0.1:5000/api/clients/{id_client}")
     if not response:
@@ -345,10 +362,75 @@ def edit_client(id_client):
     return render_template('ClientEditLog.html', current_user=current_user, title='EditClient', form=form)
 
 
-@app.route('/client_log/check_orders/<int:id_client>')
+@app.route('/orders_log')
 @login_required
-def check_client_orders(id_client):
-    pass
+def log_orders():
+    check_access()
+    response = requests.get('http://127.0.0.1:5000/api/orders')
+    if response:
+        response = response.json()
+        return render_template('orders-log.html', title="LogOrders",
+                               current_user=current_user, orders=response['orders'], particular_title='Log Orders')
+    return response.json()["message"]
+
+
+@app.route('/log_customer_orders/<int:id_customer>')
+@app.route('/client_log/log_customer_orders/<int:id_customer>')
+@login_required
+def log_customer_orders(id_customer):
+    params = {"client_id": id_customer, "check_client": True}
+    if current_user.admins:
+        response = requests.get('http://127.0.0.1:5000/api/orders', params=params)
+        if response:
+            response = response.json()
+            return render_template(
+                'orders-log.html', title="LogOrders", current_user=current_user,
+                orders=response['orders'], particular_title='Log Orders')
+        return response.json()
+    if current_user.clients and current_user.clients[0].id == id_customer:
+        response = requests.get('http://127.0.0.1:5000/api/orders', params=params)
+        if response:
+            response = response.json()
+            return render_template(
+                'orders-log.html', title="LogOrders", current_user=current_user,
+                orders=response['orders'], particular_title='My orders')
+        return response.json()
+    abort(403, message="No access")
+
+
+@app.route('/add_to_the_cart/<int:id_item>')
+def add_to_cart(id_item):
+    if 'items' not in session:
+        session['items'] = {"id_item": [id_item, ]}
+    else:
+        el = session.get('items')
+        el['id_item'].append(id_item)
+        session['items'] = el
+    return jsonify({"items": session.get('items')})
+
+
+@app.route('/get_cart')
+def get_cart():
+    return jsonify({'items': session.get('items')})
+
+
+@app.route('/delete_from_the_cart/<int:id_item>')
+def delete_from_cart(id_item):
+    try:
+        el = session.get('items')
+        el['id_item'].remove(id_item)
+        session['items'] = el
+        return jsonify({"items": session.get('items')})
+    except KeyError:
+        abort(404, message='NO CART')
+    except ValueError:
+        abort(404, message="NOT FOUND")
+
+
+@app.route('/delete_cart')
+def delete_cart():
+    session.pop('items', None)
+    return jsonify({"success": "cart deleted"})
 
 
 def main():

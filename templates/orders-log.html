@@ -1,0 +1,28 @@
+{% extends "navbar_menu.html" %}
+
+{% block content3 %}
+<h1 style="margin: 5%" align="center">{{ particular_title }}</h1>
+<div class="container" style="background-color:#e3f2fd" align="center">
+    {% for order_info in orders %}
+        <div class="box">
+            <div class="row">
+                <div class="col">Id</div>
+                {% if current_user.admins %}
+                    <div class="col">Client Id</div>
+                {% endif %}
+                <div class="col">Date Order</div>
+                <div class="col">Deliver Days</div>
+            </div>
+            <div class="row">
+                <div class="col">{{ order_info.id }}</div>
+                {% if current_user.admins %}
+                    <div class="col">{{ order_info.client_id }}</div>
+                {% endif %}
+                <div class="col">{{ order_info.date_order }}</div>
+                <div class="col">{{ order_info.deliver_days }}</div>
+            </div>
+        </div>
+        <a><button class="btn btn-secondary">Check Order Content</button></a>
+    {% endfor %}
+</div>
+{% endblock %}

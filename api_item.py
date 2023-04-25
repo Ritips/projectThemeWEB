@@ -50,6 +50,8 @@ class ItemResource(Resource):
             abort(409, message=f'Item with id: {args["id"]} already exists')
         item.id, item.title, item.id_category = args['id'], args['title'], args['id_category']
         item.img_path = args['img_path']
+        item.description = args['description']
+        item.cost = args['cost']
         db_sess.commit()
         db_sess.close()
         return jsonify({"success": 'OK'})
@@ -78,6 +80,8 @@ class ItemListResource(Resource):
             abort(400, message="'title': 'Missing required parameter in the query string'")
         item = Item()
         item.set_information(title=args["title"], id_category=args["id_category"], img_path=args["img_path"])
+        item.cost = args['cost']
+        item.description = args['cost']
         db_sess = db_session.create_session()
         db_sess.add(item)
         db_sess.commit()

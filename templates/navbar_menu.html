@@ -19,7 +19,7 @@
             <a href="/client_log">
                 <button type="button" class="btn btn-outline-secondary"><b>Log clients</b></button>
             </a>
-            <a href="#">
+            <a href="/orders_log">
                 <button type="button" class="btn btn-outline-secondary"><b>Log orders</b></button>
             </a>
             <a href="/management_items">
@@ -29,7 +29,7 @@
                 <button type="button" class="btn btn-outline-secondary"><b>Manage categories</b></button>
             </a>
         {% elif current_user.clients %}
-            <a href="#" style="margin-right:20%">
+            <a href="/log_customer_orders/{{ current_user.clients[0].id }}" style="margin-right:20%">
                 <button type="button" class="btn btn-outline-secondary"><b>My Orders</b></button>
             </a>
         {% endif %}

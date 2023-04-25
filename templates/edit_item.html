@@ -43,6 +43,30 @@
     </div>
 
     <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
+        <b>{{ form.description.label }}</b>
+      </div>
+      <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
+        {{ form.description(class="form-control") }}
+        {% for error in form.description.error %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
+      <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
+        <b>{{ form.cost.label }}</b>
+      </div>
+      <div class="col" style="margin-left:2%; margin-right:2%; font-size: 20px">
+        {{ form.cost(class="form-control") }}
+        {% for error in form.cost.error %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row" style="margin: 1%">
       <div class="col" style="margin-left: 2%;margin-right:2%;font-size:20px">
         <img src="{{ form.path_previous_image.data }}" class="img-fluid img-thumbnail rounded float-left" alt="NOT FOUND">
       </div>
