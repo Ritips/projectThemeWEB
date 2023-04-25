@@ -407,7 +407,12 @@ def add_to_cart(id_item):
         el = session.get('items')
         el['id_item'].append(id_item)
         session['items'] = el
-    return jsonify({"items": session.get('items')})
+    el = session['items']
+    params = {'check_list': True, 'list_id': el['id_item']}
+    response = requests.get('http://127.0.0.1:5000/api/items', params=params)
+    if response:
+        return render_template('cart.html', current_user=current_user, title="Cart", items=response.json()['items'])
+    return response.json()
 
 
 @app.route('/get_cart')

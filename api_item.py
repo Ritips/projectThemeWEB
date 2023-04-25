@@ -12,6 +12,8 @@ parser.add_argument("id_category", type=int, location="args", default=None)
 parser.add_argument("img_path", location="args", default='/static/img/default.png')
 parser.add_argument("cost", type=int, location="args")
 parser.add_argument("description", location="args", default='-')
+parser.add_argument('check_list', type=bool, default=False, location='args')
+parser.add_argument('list_id', type=list, location='args')
 
 
 class ItemResource(Resource):
@@ -62,7 +64,10 @@ class ItemListResource(Resource):
     def get():
         args = parser.parse_args()
         db_sess = db_session.create_session()
-        if args['id_category'] is None:
+        if args['check_list']:
+            items = db_sess.query(Item).filter(Item.id.in_(args['list_id']))
+            db_sess.close()
+        elif args['id_category'] is None:
             items = db_sess.query(Item).all()
             db_sess.close()
         else:
