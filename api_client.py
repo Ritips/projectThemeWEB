@@ -6,6 +6,7 @@ from data.clients import Client
 
 parser = reqparse.RequestParser()
 parser.add_argument("user_id", type=int, required=True, location="args")
+parser.add_argument("previous_id", type=int, location="args")
 
 
 class ClientResource(Resource):
@@ -37,12 +38,19 @@ class ClientResource(Resource):
     @staticmethod
     def put(id_client):
         args = parser.parse_args()
+        print(args)
+        print(id_client)
         db_sess = db_session.create_session()
-        client = db_sess.query(Client).get(id_client)
+        client = db_sess.query(Client).get(args["previous_id"])
+        print(client)
         if not client:
             db_sess.close()
-            abort(404, message=f"Client {id_client} not Found")
+            abort(404, message=f"Client {args['previous_id']} not Found")
+        if db_sess.query(Client).get(id_client):
+            db_sess.close()
+            abort(409, message=f"Client {id_client} already exists")
         try:
+            client.id = id_client
             client.login_id = args["user_id"]
             db_sess.commit()
             db_sess.close()

@@ -335,6 +335,7 @@ def edit_client(id_client):
         return response.json()
     form = EditClientForm()
     info = response.json()['clients']
+    previous_id = info['client']['id']
     if request.method == 'GET':
         form.id_client.data = info['client']['id']
         form.bool_admin.data = False
@@ -353,7 +354,7 @@ def edit_client(id_client):
                                        title='EditClient', message=response.json()['message'], form=form)
             return redirect('/client_log')
         else:
-            params = {"user_id": user_id, 'client_id': id_client}
+            params = {"user_id": user_id, 'previous_id': previous_id}
             response = requests.put(f'http://127.0.0.1:5000/api/clients/{id_client}', params=params)
             if response:
                 return redirect('/client_log')

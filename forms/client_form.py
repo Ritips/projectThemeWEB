@@ -5,5 +5,5 @@ from wtforms.validators import DataRequired
 
 class EditClientForm(FlaskForm):
     id_client = IntegerField("id client", validators=[DataRequired()])
-    bool_admin = BooleanField("Admin", default=False, validators=[DataRequired()])
+    bool_admin = BooleanField("Admin", default=False)
     submit = SubmitField("submit")
