@@ -3,26 +3,28 @@
 {% block content3 %}
 <h1 style="margin: 5%" align="center">Cart</h1>
 
-<div class="container" style="background-color:#e3f2fd" align="center">
-    {% for item in items %}
+<div class="container-fluid" style="background-color:#e3f2fd" align="center">
     <div class="row g-5">
-      <div class="col-md-5 col-lg-4 order-md-last">
-        <ul class="list-group mb-3">
-
+      <div class="col">
+          <ul class="list-group mb-4">
+              {% for item in items %}
             <li class="list-group-item d-flex justify-content-between lh-sm">
-                <div>
-                    <h6 class="my-0">{{ output[item].title }}</h6>
-                        <small class="text-body-secondary">{{ output[item].description }}</small>
-                    </div>
+                <div><h6 class="my-0">{{ output[item].title }}</h6>
+                    <small class="text-body-secondary">{{ output[item].description }}</small>
+                </div>
                 <span class="text-body-secondary">${{ output[item].cost }}</span>
             </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>{{ total_price }}</strong>
-          </li>
-        </ul>
+               <li class="list-group-item d-flex justify-content-between" style="margin-bottom: 1%;">
+                  <button class="btn btn-outline-secondary" style="width: 100%; align: center">remove</button>
+              </li>
+              {% endfor %}
+            <li class="list-group-item d-flex justify-content-between">
+                <span>Total (USD)</span>
+                <strong>{{ total_price }}</strong>
+            </li>
+          </ul>
       </div>
     </div>
-    {% endfor %}
+
 </div>
 {% endblock %}
