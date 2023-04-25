@@ -408,11 +408,16 @@ def add_to_cart(id_item):
         el['id_item'].append(id_item)
         session['items'] = el
     el = session['items']
-    params = {'check_list': True, 'list_id': el['id_item']}
-    response = requests.get('http://127.0.0.1:5000/api/items', params=params)
-    if response:
-        return render_template('cart.html', current_user=current_user, title="Cart", items=response.json()['items'])
-    return response.json()
+    output = {}
+    valid_keys = []
+    for id_item in el['id_item']:
+        response = requests.get(f'http://127.0.0.1:5000/api/items/{id_item}')
+        if not response:
+            continue
+        valid_keys.append(id_item)
+        response = response.json()
+        output[id_item] = response['items']
+    return render_template('cart.html', current_user=current_user, title="Cart", items=valid_keys, output=output)
 
 
 @app.route('/get_cart')

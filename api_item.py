@@ -65,7 +65,8 @@ class ItemListResource(Resource):
         args = parser.parse_args()
         db_sess = db_session.create_session()
         if args['check_list']:
-            items = db_sess.query(Item).filter(Item.id.in_(args['list_id']))
+            print(args['list_id'])
+            items = db_sess.query(Item).filter(Item.id.in_(args['list_id'])).all()
             db_sess.close()
         elif args['id_category'] is None:
             items = db_sess.query(Item).all()

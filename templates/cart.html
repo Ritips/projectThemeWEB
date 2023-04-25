@@ -5,12 +5,24 @@
 
 <div class="container" style="background-color:#e3f2fd" align="center">
     {% for item in items %}
-        <div class="box" style="background-color:#1E90FF">
-            <div class="row">
-                <h6>{{ item.title }}</h6>
-                <small class="text-body-secondary">{{ item.description }}</small>
-            </div>
-        </div>
+    <div class="row g-5">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <ul class="list-group mb-3">
+
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                    <h6 class="my-0">{{ output[item].title }}</h6>
+                        <small class="text-body-secondary">{{ output[item].description }}</small>
+                    </div>
+                <span class="text-body-secondary">${{ output[item].cost }}</span>
+            </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total (USD)</span>
+            <strong>{{ total_price }}</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
