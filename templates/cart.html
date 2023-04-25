@@ -15,8 +15,10 @@
                 <span class="text-body-secondary">${{ output[item].cost }}</span>
             </li>
                <li class="list-group-item d-flex justify-content-between" style="margin-bottom: 1%;">
-                  <button class="btn btn-outline-secondary" style="width: 100%; align: center">remove</button>
-              </li>
+                   <a href="/delete_from_the_cart/{{ item }}">
+                       <button class="btn btn-outline-secondary" style="width: 100%; align: center">remove</button>
+                   </a>
+               </li>
               {% endfor %}
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total (USD)</span>

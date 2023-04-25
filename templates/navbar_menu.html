@@ -10,6 +10,11 @@
             <a href="/">
                 <button type="button" class="btn btn-outline-secondary"><b>Menu</b></button>
             </a>
+            {% if show_cart %}
+                <a href="/get_cart">
+                    <button type="button" class="btn btn-outline-secondary"><b>Cart</b></button>
+                </a>
+            {% endif %}
         {% else %}
             <a href="/" style="margin-right:20%">
                 <button type="button" class="btn btn-outline-secondary"><b>Menu</b></button>

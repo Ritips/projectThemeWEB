@@ -42,11 +42,13 @@ def main_page():
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
     response2 = requests.get('http://127.0.0.1:5000/api/items')
     if response and response2:
+        print(session)
         categories = response.json()["categories"]
         items = response2.json()["items"]
         format_categories = [categories[i: i + 3] for i in range(0, len(categories), 3)]
-        return render_template('categories.html', title="SystemSHOP", current_user=current_user,
-                               categories=format_categories, items=items)
+        return render_template('categories.html', title="SystemSHOP", current_user=current_user, items=items,
+                               show_cart=('items' in session and session['items']['id_item']),
+                               categories=format_categories)
     return jsonify(response.json())
 
 
@@ -68,10 +70,12 @@ def get_items_certain_category(category_id):
     category = response2.json()["categories"]
     if response:
         items = response.json()["items"]
-        return render_template("one_category.html", title=category["title"], current_user=current_user,
-                               items=items, category=category, response=True)  # temporal render_template
-    return render_template("one_category.html", title=category["title"], current_user=current_user,
-                           items=None, category=category, response=False)
+        return render_template("one_category.html", title=category["title"], current_user=current_user, response=True,
+                               show_cart=('items' in session and session['items']['id_item']),
+                               items=items, category=category)
+    return render_template("one_category.html", title=category["title"], current_user=current_user, response=False,
+                           show_cart=('items' in session and session['items']['id_item']),
+                           items=None, category=category)
 
 
 @app.route('/categories')
@@ -417,12 +421,24 @@ def add_to_cart(id_item):
         valid_keys.append(id_item)
         response = response.json()
         output[id_item] = response['items']
-    return render_template('cart.html', current_user=current_user, title="Cart", items=valid_keys, output=output)
+    return render_template('cart.html', current_user=current_user, title="Cart", items=valid_keys, output=output,
+                           show_cart=True)
 
 
 @app.route('/get_cart')
 def get_cart():
-    return jsonify({'items': session.get('items')})
+    el = session.get('items')
+    output = {}
+    valid_keys = []
+    for id_item in el['id_item']:
+        response = requests.get(f'http://127.0.0.1:5000/api/items/{id_item}')
+        if not response:
+            continue
+        valid_keys.append(id_item)
+        response = response.json()
+        output[id_item] = response['items']
+    return render_template('cart.html', current_user=current_user, title="Cart", items=valid_keys, output=output,
+                           show_cart=True)
 
 
 @app.route('/delete_from_the_cart/<int:id_item>')
@@ -431,7 +447,17 @@ def delete_from_cart(id_item):
         el = session.get('items')
         el['id_item'].remove(id_item)
         session['items'] = el
-        return jsonify({"items": session.get('items')})
+        output = {}
+        valid_keys = []
+        for id_item in el['id_item']:
+            response = requests.get(f'http://127.0.0.1:5000/api/items/{id_item}')
+            if not response:
+                continue
+            valid_keys.append(id_item)
+            response = response.json()
+            output[id_item] = response['items']
+        return render_template('cart.html', current_user=current_user, title="Cart", items=valid_keys, output=output,
+                               show_cart=True)
     except KeyError:
         abort(404, message='NO CART')
     except ValueError:
