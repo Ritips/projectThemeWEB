@@ -7,33 +7,50 @@
             <b>ProjectWEB SystemShop</b>
         </a>
         {% if current_user.is_authenticated %}
-            <a href="/">
-                <button type="button" class="btn btn-outline-secondary"><b>Menu</b></button>
-            </a>
+            {% if current_user.admins %}
+                <div class="row" style="height: 50%">
+                    <a href="/" class="col" style="width: 200px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Menu</b></button>
+                    </a>
+                    {% if show_cart %}
+                        <a href="/get_cart" class="col" style="width: 200px">
+                            <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Cart</b></button>
+                        </a>
+                    {% endif %}
+                    <a href="/client_log" class="col" style="width: 200px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Log clients</b></button>
+                    </a>
+                    <a href="/orders_log" class="col" style="width: 200px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Log orders</b></button>
+                    </a>
+                    <a href="/management_items" class="col" style="width: 200px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Manage items</b></button>
+                    </a>
+                    <a href="/categories" class="col" style="width: 300px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Manage categories</b></button>
+                    </a>
+                </div>
+            {% elif current_user.clients %}
+                <div class="row" style="height: 50%; margin-right: 40%">
+                    <a href="/" class="col" style="width: 200px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Menu</b></button>
+                    </a>
+                    {% if show_cart %}
+                        <a href="/get_cart" class="col" style="width: 200px">
+                            <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>Cart</b></button>
+                        </a>
+                    {% endif %}
+                    <a href="/log_customer_orders/{{ current_user.clients[0].id }}" class="col" style="width: 200px">
+                        <button type="button" class="btn btn-outline-secondary" style="width: 100%"><b>My Orders</b></button>
+                    </a>
+                </div>
+            {% endif %}
         {% else %}
-            <a href="/" style="margin-right:20%">
+            <a href="/" class="col">
                 <button type="button" class="btn btn-outline-secondary"><b>Menu</b></button>
             </a>
         {% endif %}
-        {% if current_user.admins %}
-            <a href="/client_log">
-                <button type="button" class="btn btn-outline-secondary"><b>Log clients</b></button>
-            </a>
-            <a href="/orders_log">
-                <button type="button" class="btn btn-outline-secondary"><b>Log orders</b></button>
-            </a>
-            <a href="/management_items">
-                <button type="button" class="btn btn-outline-secondary"><b>Manage items</b></button>
-            </a>
-            <a href="/categories">
-                <button type="button" class="btn btn-outline-secondary"><b>Manage categories</b></button>
-            </a>
-        {% elif current_user.clients %}
-            <a href="/log_customer_orders/{{ current_user.clients[0].id }}" style="margin-right:20%">
-                <button type="button" class="btn btn-outline-secondary"><b>My Orders</b></button>
-            </a>
-        {% endif %}
-        <div style="margin-left:40%">
+        <div style="">
             {% if not current_user.is_authenticated %}
                 <a class="navbar-brand" href="/login">
                     <button type="button" class="btn btn-outline-secondary"><b>Log in</b></button>
