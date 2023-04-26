@@ -1,0 +1,38 @@
+{% extends "navbar_menu.html" %}
+
+{% block content3 %}
+<h1 align="center" style="margin-top: 5%">Customer Order</h1>
+
+<div class="container" style="background-color:#e3f2fd">
+    {% for element in orders %}
+        {% if element.get('items') %}
+            <h3 align="center" style="margin: 1%">DATE ORDER: {{ element.order.date_order }} DELIVER DAYS: {{ element.order.deliver_days }}</h3>
+            <h4 align="center" style="margin: 2%">ITEMS</h4>
+            <table class="table table-table-bordered table-striped" style="border: 1px solid">
+                <thead>
+                    <tr>
+                        <th style="width: 20%"></th>
+                        <th class="text-center">TITLE</th>
+                        <th class="text-center">CATEGORY</th>
+                        <th class="text-center">DESCRIPTION</th>
+                        <th class="text-center">COST</th>
+                    </tr>
+                </thead>
+                    {% for item in element.get('items')  %}
+                        <tr>
+                            <td style="width: 20%">
+                                <img src="{{ item.get('img_path') }}" alt="{{ k1 }}" class="img-fluid img-thumbnail rounded float-left">
+                            </td>
+                            <td class="text-nowrap" scope="row" style="text-align: center">{{ item.get('title') }}</td>
+                            <td class="text-nowrap" scope="row" style="text-align: center">{{ item.get('category') }}</td>
+                            <td class="text-nowrap" scope="row" style="text-align: center">{{ item.get('description') }}</td>
+                            <td class="text-nowrap" scope="row" style="text-align: center">{{ item.get('cost') }}</td>
+                        </tr>
+                    {% endfor %}
+                <tbody>
+                </tbody>
+            </table>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

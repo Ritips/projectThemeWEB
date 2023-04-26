@@ -304,6 +304,7 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
+    session.pop('items', None)
     logout_user()
     return redirect('/')
 
@@ -470,6 +471,40 @@ def delete_from_cart(id_item):
 def delete_cart():
     session.pop('items', None)
     return jsonify({"success": "cart deleted"})
+
+
+@app.route('/confirm_order')
+@login_required
+def confirm_order():
+    el = session.get('items')
+    if current_user.admins:
+        return f"{el}; This Function not available for admin"
+    client_id = current_user.clients[0].id
+    params = {"client_id": client_id}
+    response = requests.post('http://127.0.0.1:5000/api/orders', params=params)
+    if not response:
+        return response.json()
+    params['check_client'] = True
+    response = requests.get('http://127.0.0.1:5000/api/orders', params=params)
+    if not response:
+        return response.json()
+    id_order = response.json()['orders'][-1]['id']
+    for id_item in el['id_item']:
+        params = {"id_item": id_item, "id_order": id_order}
+        requests.post('http://127.0.0.1:5000/api/order_to_item', params=params)
+    return redirect('/')
+
+
+@app.route('/client_log/log_customer_orders/check_content_order/<int:id_client>')
+@app.route('/log_customer_orders/check_content_order/<int:id_client>')
+@login_required
+def check_content_order(id_client):
+    params = {"client_id": id_client, "check_client": True, "get_items": True}
+    response = requests.get('http://127.0.0.1:5000/api/orders', params=params)
+    if not response:
+        return response.json()
+    return render_template('check_content_customer_order.html', title="OrderContent", current_user=current_user,
+                           orders=response.json()['orders'])
 
 
 def main():

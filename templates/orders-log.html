@@ -22,7 +22,7 @@
                 <div class="col">{{ order_info.deliver_days }}</div>
             </div>
         </div>
-        <a><button class="btn btn-secondary">Check Order Content</button></a>
+        <a href="/log_customer_orders/check_content_order/{{ order_info.client_id }}"><button class="btn btn-secondary">Check Order Content</button></a>
     {% endfor %}
 </div>
 {% endblock %}

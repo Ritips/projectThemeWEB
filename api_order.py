@@ -82,10 +82,29 @@ class OrderListResource(Resource):
     def get():
         args = parser.parse_args()
         db_sess = db_session.create_session()
+        if args['get_items'] and args['check_client']:
+            orders = db_sess.query(Order).filter(Order.client_id == args['client_id']).all()
+            output = {"orders": []}
+            for element in orders:
+                information = {"order": {}, "items": []}
+                order_items = element.ordered_items
+                information["order"] = {"id": element.id, "client_id": element.client_id,
+                                        "date_order": element.date_order, "deliver_days": element.deliver_days}
+                for order_item in order_items:
+                    item = order_item.items
+                    info_item = {"id": item.id, "title": item.title, "id_category": item.id_category,
+                                 "img_path": item.img_path, "cost": item.cost, "description": item.description}
+                    try:
+                        info_item["category"] = item.category.title
+                    except AttributeError:
+                        info_item["category"] = "This item doesn't have any category"
+                    information['items'].append(info_item)
+                output['orders'].append(information)
+            return jsonify(output)
+
         orders = db_sess.query(Order).all() if not args['check_client'] else db_sess.query(Order).filter(
             Order.client_id == args['client_id']
         ).all()
-
         return jsonify({
             "orders": [
                 {"id": order.id, "client_id": order.client_id, "date_order": order.date_order,
@@ -113,4 +132,7 @@ class OrderListResource(Resource):
                 abort(400, message=f"Wrong date {date}. Format is (%Y-%m-%d %H:%M:%S)")
         if args["deliver_days"] != -1:
             order.deliver_days = args["deliver_days"]
+        db_sess = db_session.create_session()
+        db_sess.add(order)
+        db_sess.commit()
         return jsonify({"success": "OK"})
