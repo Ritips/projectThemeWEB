@@ -304,6 +304,7 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
+    session.clear()
     session.pop('items', None)
     logout_user()
     return redirect('/')
@@ -492,6 +493,7 @@ def confirm_order():
     for id_item in el['id_item']:
         params = {"id_item": id_item, "id_order": id_order}
         requests.post('http://127.0.0.1:5000/api/order_to_item', params=params)
+    session.pop('items', None)
     return redirect('/')
 
 
