@@ -87,7 +87,7 @@ class ItemListResource(Resource):
         item = Item()
         item.set_information(title=args["title"], id_category=args["id_category"], img_path=args["img_path"])
         item.cost = args['cost']
-        item.description = args['cost']
+        item.description = args['description']
         db_sess = db_session.create_session()
         db_sess.add(item)
         db_sess.commit()
