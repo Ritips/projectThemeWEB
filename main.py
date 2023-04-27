@@ -42,7 +42,6 @@ def main_page():
     response = requests.get('http://127.0.0.1:5000/api/type_of_goods')
     response2 = requests.get('http://127.0.0.1:5000/api/items')
     if response and response2:
-        print(session)
         categories = response.json()["categories"]
         items = response2.json()["items"]
         format_categories = [categories[i: i + 3] for i in range(0, len(categories), 3)]
@@ -489,18 +488,23 @@ def confirm_order():
     if not response:
         return response.json()
     id_order = response.json()['orders'][-1]['id']
-    for id_item in el['id_item']:
-        params = {"id_item": id_item, "id_order": id_order}
-        requests.post('http://127.0.0.1:5000/api/order_to_item', params=params)
-    session.pop('items', None)
-    return redirect('/')
+    try:
+        for id_item in el['id_item']:
+            params = {"id_item": id_item, "id_order": id_order}
+            requests.post('http://127.0.0.1:5000/api/order_to_item', params=params)
+        session.pop('items', None)
+        return redirect('/')
+    except TypeError:
+        return redirect('/get_cart')
 
 
-@app.route('/client_log/log_customer_orders/check_content_order/<int:id_client>')
-@app.route('/log_customer_orders/check_content_order/<int:id_client>')
+@app.route('/client_log/log_customer_orders/check_content_order/<int:id_client>/<int:id_order>')
+@app.route('/log_customer_orders/check_content_order/<int:id_client>/<int:id_order>')
 @login_required
-def check_content_order(id_client):
-    params = {"client_id": id_client, "check_client": True, "get_items": True}
+def check_content_order(id_client, id_order):
+    if not current_user.admins and id_client != current_user.clients[0].id:
+        abort(403, message="Not allowed")
+    params = {"client_id": id_client, "check_client": True, "get_items": True, "id_order": id_order}
     response = requests.get('http://127.0.0.1:5000/api/orders', params=params)
     if not response:
         return response.json()

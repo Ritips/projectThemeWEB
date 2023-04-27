@@ -11,6 +11,7 @@ parser.add_argument("date_order", location="args", default=-1)
 parser.add_argument("deliver_days", type=int, location="args", default=-1)
 parser.add_argument("get_items", type=bool, default=False, location="args")
 parser.add_argument("check_client", type=bool, default=False, location='args')
+parser.add_argument("id_order", type=int, location='args')
 
 
 def abort_if_wrong_date(date):
@@ -83,7 +84,7 @@ class OrderListResource(Resource):
         args = parser.parse_args()
         db_sess = db_session.create_session()
         if args['get_items'] and args['check_client']:
-            orders = db_sess.query(Order).filter(Order.client_id == args['client_id']).all()
+            orders = db_sess.query(Order).filter(Order.client_id == args['client_id']).filter(Order.id == args['id_order']).all()
             output = {"orders": []}
             for element in orders:
                 information = {"order": {}, "items": []}
