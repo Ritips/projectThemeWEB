@@ -523,7 +523,8 @@ def main():
     api.add_resource(api_order.OrderListResource, '/api/orders')
     api.add_resource(api_order_to_items.OrderItemResource, '/api/order_to_item/<int:id_order_item>')
     api.add_resource(api_order_to_items.OrderItemListResource, '/api/order_to_item')
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':
