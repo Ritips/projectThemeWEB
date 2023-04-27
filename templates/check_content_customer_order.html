@@ -3,7 +3,7 @@
 {% block content3 %}
 <h1 align="center" style="margin-top: 5%">Customer Order</h1>
 
-<div class="container" style="background-color:#e3f2fd">
+<div class="container">
     {% for element in orders %}
         {% if element.get('items') %}
             <h3 align="center" style="margin: 1%">DATE ORDER: {{ element.order.date_order }} DELIVER DAYS: {{ element.order.deliver_days }}</h3>
